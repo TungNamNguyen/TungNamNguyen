@@ -34,8 +34,8 @@
 <a href="" target="_blank" rel="noreferrer"> <img src="https://github.com/devicons/devicon/blob/master/icons/vuejs/vuejs-original.svg" alt="vuejs" width="40" height="40" /> </a>
 </p>
 
-<p><img align="left" src="https://github-readme-stats.vercel.app/api/top-langs?username=roxnguyen1612&show_icons=true&locale=en&layout=compact" alt="Top Languages" /></p>
+<p><img align="left" src="https://github-readme-stats.vercel.app/api/top-langs?username=TungNamNguyen&show_icons=true&locale=en&layout=compact" alt="Top Languages" /></p>
 
-<p>&nbsp;<img align="center" src="https://github-readme-stats.vercel.app/api?username=roxnguyen1612&show_icons=true&locale=en" alt="GitHub Stats" /></p>
+<p>&nbsp;<img align="center" src="https://github-readme-stats.vercel.app/api?username=TungNamNguyen&show_icons=true&locale=en" alt="GitHub Stats" /></p>
 
-<p><img align="center" src="https://github-readme-streak-stats.herokuapp.com/?user=roxnguyen1612&" alt="GitHub Streak Stats" /></p>
+<p><img align="center" src="https://github-readme-streak-stats.herokuapp.com/?user=TungNamNguyen&" alt="GitHub Streak Stats" /></p>
