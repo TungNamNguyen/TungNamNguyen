@@ -1,5 +1,5 @@
 <h1 align="center">Hi there👋, I am Tung Nguyen</h1>
-<h3 align="center">Data Engineer | Data Analyst | BI Analyst</h3>
+<h3 align="center">Business Intelligence Engineer | Analytics Engineer | Data Engineer</h3>
 
 - 🧑‍💼 I'm currently a Business Intelligence Analyst at [VP Bank](https://www.vpbank.com.vn/)  
 - 👨‍💻 All of my projects are available [here](https://github.com/TungNamNguyen)
