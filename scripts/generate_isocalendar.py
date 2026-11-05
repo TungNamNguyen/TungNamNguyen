@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
 Generates and updates:
-1. icons/isocalendar.svg (3D Isometric Contributions Calendar using official lowlighter/metrics layout)
-2. icons/github-stats.svg (GitHub Stats card with enlarged, recruiter-readable typography & Firefox fix)
-3. icons/streak-stats.svg (GitHub Streak Stats card with enlarged typography & unified Slate-Blue palette)
+1. icons/isocalendar.svg (Exact lowlighter/metrics 3D Isometric Contributions Calendar layout)
+2. icons/github-stats.svg (GitHub Stats card matched to template & calibrated for width="380")
+3. icons/streak-stats.svg (GitHub Streak Stats card matched to template & calibrated for width="380")
 """
 
 import re
@@ -52,11 +52,11 @@ def fetch_github_contributions(username: str) -> list[dict]:
     return days
 
 
-def generate_isocalendar() -> None:
+def generate_isocalendar() -> list[dict]:
     days = fetch_github_contributions(USERNAME)
     if not days:
         print("No contributions found")
-        return
+        return []
 
     counts = [d["count"] for d in days]
     reference = max(counts) if counts else 1
@@ -114,16 +114,16 @@ def generate_isocalendar() -> None:
     current_unit = "day" if current_streak == 1 else "days"
     best_unit = "day" if best_streak == 1 else "days"
 
-    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="480" height="305" viewBox="0 0 480 305" class="">
+    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="480" height="330" class="">
     <defs>
         <style/>
     </defs>
-    <style>@keyframes animation-gauge{{0%{{stroke-dasharray:0 329}}}}svg{{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;color:#334155}}h2,h3{{margin:8px 0 4px;padding:0;color:#0969da;font-weight:700}}h2 svg,h3 svg{{fill:currentColor}}h2{{font-size:18px}}h3{{font-size:15.5px;font-weight:600}}svg{{font-size:14.5px;font-weight:500}}section&gt;.field{{margin-left:5px;margin-right:5px}}.field{{display:flex;align-items:center;margin-bottom:3px;white-space:nowrap}}.field svg{{margin:0 8px;fill:#0969da;flex-shrink:0}}.field b{{color:#0f172a;font-weight:700;margin-left:4px;font-size:15px}}.row{{display:flex;flex-wrap:wrap}}.row section{{flex:1 1 0}}.calendar.field{{margin:4px 0 4px 7px}}.calendar .day{{outline:1px solid rgba(27,31,35,.04);outline-offset:-1px}}svg.calendar{{margin-left:13px;margin-top:4px}}:root{{--color-calendar-graph-day-bg:#ebedf0;--color-calendar-graph-day-border:rgba(27,31,35,0.06);--color-calendar-graph-day-L1-bg:#9be9a8;--color-calendar-graph-day-L2-bg:#40c463;--color-calendar-graph-day-L3-bg:#30a14e;--color-calendar-graph-day-L4-bg:#216e39}}#metrics-end{{width:100%}}</style>
+    <style>@keyframes animation-gauge{{0%{{stroke-dasharray:0 329}}}}svg{{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;color:#334155}}h2,h3{{margin:8px 0 3px;padding:0;color:#0969da;font-weight:600}}h2 svg,h3 svg{{fill:currentColor}}h2{{font-size:16px}}h3,svg{{font-size:14px}}section&gt;.field{{margin-left:5px;margin-right:5px}}.field{{display:flex;align-items:center;margin-bottom:3px;white-space:nowrap}}.field svg{{margin:0 8px;fill:#0969da;flex-shrink:0}}.field b{{color:#0f172a;font-weight:600;margin-left:4px}}.row{{display:flex;flex-wrap:wrap}}.row section{{flex:1 1 0}}.calendar.field{{margin:4px 0 4px 7px}}.calendar .day{{outline:1px solid rgba(27,31,35,.04);outline-offset:-1px}}svg.calendar{{margin-left:13px;margin-top:4px}}:root{{--color-calendar-graph-day-bg:#ebedf0;--color-calendar-graph-day-border:rgba(27,31,35,0.06);--color-calendar-graph-day-L1-bg:#9be9a8;--color-calendar-graph-day-L2-bg:#40c463;--color-calendar-graph-day-L3-bg:#30a14e;--color-calendar-graph-day-L4-bg:#216e39}}#metrics-end{{width:100%}}</style>
     <foreignObject x="0" y="0" width="100%" height="100%">
         <div xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink" class="items-wrapper">
             <section>
                 <h2 class="field">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="17" height="17">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
                         <path fill-rule="evenodd" d="M4.75 0a.75.75 0 01.75.75V2h5V.75a.75.75 0 011.5 0V2h1.25c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0113.25 16H2.75A1.75 1.75 0 011 14.25V3.75C1 2.784 1.784 2 2.75 2H4V.75A.75.75 0 014.75 0zm0 3.5h8.5a.25.25 0 01.25.25V6h-11V3.75a.25.25 0 01.25-.25h2zm-2.25 4v6.75c0 .138.112.25.25.25h10.5a.25.25 0 00.25-.25V7.5h-11z"/>
                     </svg>
                     Contributions calendar
@@ -170,7 +170,7 @@ def generate_isocalendar() -> None:
                         </div>
                     </section>
                 </div>
-                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" style="margin-top: -135px;" viewBox="0,0 480,255">
+                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" style="margin-top: -130px;" viewBox="0,0 480,270">
                     <filter id="brightness1">
                         <feComponentTransfer>
                             <feFuncR type="linear" slope="0.6"/>
@@ -213,7 +213,7 @@ def render_streak_svg(
             @keyframes currstreak {{
                 0% {{ font-size: 3px; opacity: 0.2; }}
                 80% {{ font-size: 34px; opacity: 1; }}
-                100% {{ font-size: 31px; opacity: 1; }}
+                100% {{ font-size: 30px; opacity: 1; }}
             }}
             @keyframes fadein {{
                 0% {{ opacity: 0; }}
@@ -222,7 +222,7 @@ def render_streak_svg(
         </style>
         <defs>
             <clipPath id='outer_rectangle'>
-                <rect width='495' height='195' rx='8'/>
+                <rect width='495' height='195' rx='6'/>
             </clipPath>
             <mask id='mask_out_ring_behind_fire'>
                 <rect width='495' height='195' fill='white'/>
@@ -231,7 +231,7 @@ def render_streak_svg(
         </defs>
         <g clip-path='url(#outer_rectangle)'>
             <g style='isolation: isolate'>
-                <rect stroke='#cbd5e1' stroke-width='1.2' fill='#f8fafc' rx='8' x='0.5' y='0.5' width='494' height='194'/>
+                <rect stroke='#cbd5e1' stroke-width='1.2' fill='#f8fafc' rx='6' x='0.5' y='0.5' width='494' height='194'/>
             </g>
             <g style='isolation: isolate'>
                 <line x1='165' y1='28' x2='165' y2='170' vector-effect='non-scaling-stroke' stroke-width='1' stroke='#cbd5e1' stroke-linejoin='miter' stroke-linecap='square' stroke-miterlimit='3'/>
@@ -240,13 +240,13 @@ def render_streak_svg(
             <g style='isolation: isolate'>
                 <!-- Total Contributions big number -->
                 <g transform='translate(82.5, 48)'>
-                    <text x='0' y='32' stroke-width='0' text-anchor='middle' fill='#0f172a' stroke='none' font-family='"Segoe UI", Ubuntu, sans-serif' font-weight='700' font-size='31px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 0.6s'>
+                    <text x='0' y='32' stroke-width='0' text-anchor='middle' fill='#0f172a' stroke='none' font-family='"Segoe UI", Ubuntu, sans-serif' font-weight='700' font-size='30px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 0.6s'>
                         {total_str}
                     </text>
                 </g>
                 <!-- Total Contributions label -->
                 <g transform='translate(82.5, 84)'>
-                    <text x='0' y='32' stroke-width='0' text-anchor='middle' fill='#334155' stroke='none' font-family='"Segoe UI", Ubuntu, sans-serif' font-weight='600' font-size='16.5px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 0.7s'>
+                    <text x='0' y='32' stroke-width='0' text-anchor='middle' fill='#334155' stroke='none' font-family='"Segoe UI", Ubuntu, sans-serif' font-weight='600' font-size='16px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 0.7s'>
                         Total Contributions
                     </text>
                 </g>
@@ -260,7 +260,7 @@ def render_streak_svg(
             <g style='isolation: isolate'>
                 <!-- Current Streak label -->
                 <g transform='translate(247.5, 108)'>
-                    <text x='0' y='32' stroke-width='0' text-anchor='middle' fill='#0969da' stroke='none' font-family='"Segoe UI", Ubuntu, sans-serif' font-weight='700' font-size='16.5px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 0.9s'>
+                    <text x='0' y='32' stroke-width='0' text-anchor='middle' fill='#0969da' stroke='none' font-family='"Segoe UI", Ubuntu, sans-serif' font-weight='700' font-size='16px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 0.9s'>
                         Current Streak
                     </text>
                 </g>
@@ -281,7 +281,7 @@ def render_streak_svg(
                 </g>
                 <!-- Current Streak big number -->
                 <g transform='translate(247.5, 48)'>
-                    <text x='0' y='32' stroke-width='0' text-anchor='middle' fill='#0f172a' stroke='none' font-family='"Segoe UI", Ubuntu, sans-serif' font-weight='700' font-size='31px' font-style='normal' style='animation: currstreak 0.6s linear forwards'>
+                    <text x='0' y='32' stroke-width='0' text-anchor='middle' fill='#0f172a' stroke='none' font-family='"Segoe UI", Ubuntu, sans-serif' font-weight='700' font-size='30px' font-style='normal' style='animation: currstreak 0.6s linear forwards'>
                         {curr_str}
                     </text>
                 </g>
@@ -289,13 +289,13 @@ def render_streak_svg(
             <g style='isolation: isolate'>
                 <!-- Longest Streak big number -->
                 <g transform='translate(412.5, 48)'>
-                    <text x='0' y='32' stroke-width='0' text-anchor='middle' fill='#0f172a' stroke='none' font-family='"Segoe UI", Ubuntu, sans-serif' font-weight='700' font-size='31px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 1.2s'>
+                    <text x='0' y='32' stroke-width='0' text-anchor='middle' fill='#0f172a' stroke='none' font-family='"Segoe UI", Ubuntu, sans-serif' font-weight='700' font-size='30px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 1.2s'>
                         {best_str}
                     </text>
                 </g>
                 <!-- Longest Streak label -->
                 <g transform='translate(412.5, 84)'>
-                    <text x='0' y='32' stroke-width='0' text-anchor='middle' fill='#334155' stroke='none' font-family='"Segoe UI", Ubuntu, sans-serif' font-weight='600' font-size='16.5px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 1.3s'>
+                    <text x='0' y='32' stroke-width='0' text-anchor='middle' fill='#334155' stroke='none' font-family='"Segoe UI", Ubuntu, sans-serif' font-weight='600' font-size='16px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 1.3s'>
                         Longest Streak
                     </text>
                 </g>
@@ -323,14 +323,13 @@ def generate_github_stats() -> None:
             svg = resp.read().decode("utf-8")
         # Remove Firefox font-size shrinking rules (@supports(-moz-appearance: auto))
         svg = re.sub(r"@supports\(-moz-appearance:\s*auto\)\s*\{[^}]*\{[^}]*\}[^}]*\}", "", svg)
-        # Enlarge header and stat font sizes for recruiter readability
-        svg = svg.replace("font: 600 18px 'Segoe UI'", "font: 700 20px 'Segoe UI'")
+        # Calibrate font sizes so at width="380" they match isocalendar (16px title, 14px body)
+        svg = svg.replace("font: 600 18px 'Segoe UI'", "font: 600 19.5px 'Segoe UI'")
         svg = svg.replace("font: 600 14px 'Segoe UI'", "font: 600 16px 'Segoe UI'")
-        svg = svg.replace("font: 800 24px 'Segoe UI'", "font: 800 26px 'Segoe UI'")
-        # Shift value column right so 16px labels have generous spacing
-        svg = svg.replace('x="219.01"', 'x="252"')
-        svg = svg.replace('transform="translate(390.5, 47.5)"', 'transform="translate(398, 47.5)"')
-        svg = svg.replace('rx="4.5"', 'rx="8"')
+        svg = svg.replace("font: 800 24px 'Segoe UI'", "font: 800 25px 'Segoe UI'")
+        svg = svg.replace('x="219.01"', 'x="248"')
+        svg = svg.replace('transform="translate(390.5, 47.5)"', 'transform="translate(396, 47.5)"')
+        svg = svg.replace('rx="4.5"', 'rx="6"')
         svg = svg.replace('stroke="#cbd5e1"', 'stroke="#cbd5e1" stroke-width="1.2"')
         STATS_PATH.write_text(svg, encoding="utf-8")
         print(f"Generated {STATS_PATH}")
@@ -344,7 +343,6 @@ def fmt_short_date(date_str: str) -> str:
 
 
 def generate_streak_stats(days: list[dict]) -> None:
-    # Compute live current & best streak + date ranges directly from GitHub contribution history
     best_streak = 0
     best_start = ""
     best_end = ""
@@ -387,7 +385,6 @@ def generate_streak_stats(days: list[dict]) -> None:
         else "Present"
     )
     year_total = sum(d["count"] for d in days)
-    # Base contributions prior to rolling 1-year window (~112) + current rolling year
     total_val = max(1208, year_total + 112)
     svg = render_streak_svg(
         total_str=f"{total_val:,}",
