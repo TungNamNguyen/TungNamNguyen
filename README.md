@@ -139,17 +139,19 @@
 
 <img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png" width="100%" />
 
-<table>
-  <tr>
-    <td valign="middle" align="center">
-      <img width="520" height="1" src="./icons/spacer.svg" alt="" /><br/>
-      <img src="./icons/isocalendar.svg" width="100%" alt="Contributions calendar" />
-    </td>
-    <td valign="middle" align="center">
-      <img width="380" height="1" src="./icons/spacer.svg" alt="" /><br/>
-      <img width="100%" src="https://github-readme-stats-fast.vercel.app/api?username=TungNamNguyen&show_icons=true&count_private=true&include_all_commits=true&hide_border=true&bg_color=0d1117&title_color=8b949e&text_color=c9d1d9&icon_color=8b949e&ring_color=8b949e" alt="Tung Nguyen's GitHub Stats" />
-      <br/><br/>
-      <img width="100%" src="https://github-readme-stats-fast.vercel.app/api/top-langs/?username=TungNamNguyen&layout=compact&langs_count=6&hide_border=true&bg_color=0d1117&title_color=8b949e&text_color=c9d1d9" alt="Most Used Languages" />
-    </td>
-  </tr>
-</table>
+<div align="center">
+  <table border="0" style="border-collapse: collapse; border: none;">
+    <tr style="border: none;">
+      <!-- Left: Contribution Cityscape (larger) -->
+      <td width="58%" align="center" style="border: none; padding: 10px;" valign="middle">
+        <img src="./icons/isocalendar.svg" width="560px" alt="Contributions calendar" />
+      </td>
+      <!-- Right: GitHub Stats on top, Top Languages below -->
+      <td width="42%" align="center" style="border: none; padding: 10px;" valign="middle">
+        <img src="https://github-readme-stats-fast.vercel.app/api?username=TungNamNguyen&theme=tokyonight&show_icons=true&include_all_commits=true&bg_color=101622&title_color=8AA0B8&text_color=C5CEDA&icon_color=8AA0B8&border_color=2A3548&hide_border=false" width="380" alt="GitHub Stats" />
+        <br /><br />
+        <img src="https://github-readme-stats-fast.vercel.app/api/top-langs/?username=TungNamNguyen&layout=compact&theme=tokyonight&bg_color=101622&title_color=8AA0B8&text_color=C5CEDA&icon_color=8AA0B8&border_color=2A3548&hide_border=false" width="380" alt="Top Languages" />
+      </td>
+    </tr>
+  </table>
+</div>
