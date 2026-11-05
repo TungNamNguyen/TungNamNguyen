@@ -79,11 +79,11 @@ def main() -> None:
         4: ("#216e39", "#164b27", "#0f361b"),
     }
 
-    dx = 7.0
-    dy = 4.04
-    origin_x = 76.0
-    origin_y = 74.0
-    max_bar_h = 38.0
+    dx = 6.2
+    dy = 3.58
+    origin_x = 58.0
+    origin_y = 96.0
+    max_bar_h = 28.0
 
     cubes_svg = []
     for w_idx, week in enumerate(weeks):
@@ -91,10 +91,10 @@ def main() -> None:
             cx = origin_x + (w_idx - dow) * dx
             cy = origin_y + (w_idx + dow) * dy
             if count == 0:
-                h = 3.0
+                h = 2.8
             else:
-                ratio = math.pow(count / max_day, 0.48)
-                h = 6.0 + ratio * (max_bar_h - 6.0)
+                ratio = math.pow(count / max_day, 0.5)
+                h = 5.5 + ratio * (max_bar_h - 5.5)
             top_c, left_c, right_c = colors.get(level, colors[0])
 
             p_top = f"{cx:.2f},{cy - dy - h:.2f} {cx + dx:.2f},{cy - h:.2f} {cx:.2f},{cy + dy - h:.2f} {cx - dx:.2f},{cy - h:.2f}"
@@ -119,7 +119,7 @@ def main() -> None:
   </style>
 
   <!-- Header: Contributions calendar -->
-  <g transform="translate(22, 24)">
+  <g transform="translate(20, 20)">
     <svg viewBox="0 0 16 16" width="18" height="18" fill="#57606a">
       <path fill-rule="evenodd" d="M4.75 0a.75.75 0 01.75.75V2h5V.75a.75.75 0 011.5 0V2h1.25c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0113.25 16H2.75A1.75 1.75 0 011 14.25V3.75C1 2.784 1.784 2 2.75 2H4V.75A.75.75 0 014.75 0zm0 3.5h8.5a.25.25 0 01.25.25V6h-11V3.75a.25.25 0 01.25-.25h2zm-2.25 4v6.75c0 .138.112.25.25.25h10.5a.25.25 0 00.25-.25V7.5h-11z"/>
     </svg>
@@ -127,7 +127,7 @@ def main() -> None:
   </g>
 
   <!-- Right side stats: Commits streaks & Commits per day -->
-  <g transform="translate(310, 62)">
+  <g transform="translate(332, 42)">
     <!-- Commits streaks -->
     <g transform="translate(0, 0)">
       <svg viewBox="0 0 16 16" width="16" height="16" fill="#57606a" y="1">
@@ -136,7 +136,7 @@ def main() -> None:
       <text x="26" y="13.5" class="sub">Commits streaks</text>
 
       <!-- Current streak -->
-      <g transform="translate(0, 24)">
+      <g transform="translate(0, 22)">
         <svg viewBox="0 0 16 16" width="15" height="15" fill="#57606a" y="1">
           <path fill-rule="evenodd" d="M7.998 14.5c2.832 0 5-1.98 5-4.5 0-1.463-.68-2.19-1.879-3.383l-.036-.037c-1.013-1.008-2.3-2.29-2.834-4.434-.322.256-.63.579-.864.953-.432.696-.621 1.58-.046 2.73.473.947.67 2.284-.278 3.232-.61.61-1.548.84-2.403.522a2.71 2.71 0 01-1.036-.724c-.159.442-.222.912-.222 1.401 0 2.52 2.168 4.24 4.598 4.24z"/>
         </svg>
@@ -144,7 +144,7 @@ def main() -> None:
       </g>
 
       <!-- Best streak -->
-      <g transform="translate(0, 46)">
+      <g transform="translate(0, 42)">
         <svg viewBox="0 0 16 16" width="15" height="15" fill="#57606a" y="1">
           <path fill-rule="evenodd" d="M8 .25a.75.75 0 01.75.75v3.19l2.255-2.255a.75.75 0 011.06 1.06L9.81 5.25H13a.75.75 0 010 1.5H9.81l2.255 2.255a.75.75 0 01-1.06 1.06L8.75 7.81V11a.75.75 0 01-1.5 0V7.81L4.995 10.065a.75.75 0 01-1.06-1.06L6.19 6.75H3a.75.75 0 010-1.5h3.19L3.935 2.995a.75.75 0 011.06-1.06L7.25 4.19V1A.75.75 0 018 .25z"/>
         </svg>
@@ -153,7 +153,7 @@ def main() -> None:
     </g>
 
     <!-- Commits per day -->
-    <g transform="translate(0, 82)">
+    <g transform="translate(0, 74)">
       <svg viewBox="0 0 16 16" width="16" height="16" fill="#57606a" y="1">
         <path fill-rule="evenodd" d="M8 5.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5zM4 8a4 4 0 118 0 4 4 0 01-8 0z"/>
         <path fill-rule="evenodd" d="M0 8a.75.75 0 01.75-.75h3.5a.75.75 0 010 1.5H.75A.75.75 0 010 8zm11 0a.75.75 0 01.75-.75h3.5a.75.75 0 010 1.5h-3.5A.75.75 0 0111 8z"/>
@@ -161,7 +161,7 @@ def main() -> None:
       <text x="26" y="13.5" class="sub">Commits per day</text>
 
       <!-- Highest in a day -->
-      <g transform="translate(0, 24)">
+      <g transform="translate(0, 22)">
         <svg viewBox="0 0 16 16" width="15" height="15" fill="#57606a" y="1">
           <path fill-rule="evenodd" d="M8 2.5a.75.75 0 01.53.22l3.75 3.75a.75.75 0 01-1.06 1.06L8.75 5.06v6.69a.75.75 0 01-1.5 0V5.06L4.78 7.53a.75.75 0 01-1.06-1.06l3.75-3.75A.75.75 0 018 2.5zM2.75 13.5a.75.75 0 000 1.5h10.5a.75.75 0 000-1.5H2.75z"/>
         </svg>
@@ -169,7 +169,7 @@ def main() -> None:
       </g>
 
       <!-- Average per day -->
-      <g transform="translate(0, 46)">
+      <g transform="translate(0, 42)">
         <svg viewBox="0 0 16 16" width="15" height="15" fill="#57606a" y="1">
           <path fill-rule="evenodd" d="M8 1a.75.75 0 01.75.75v3.69l1.22-1.22a.75.75 0 111.06 1.06l-2.5 2.5a.75.75 0 01-1.06 0l-2.5-2.5a.75.75 0 011.06-1.06l1.22 1.22V1.75A.75.75 0 018 1zm0 14a.75.75 0 01-.75-.75v-3.69l-1.22 1.22a.75.75 0 01-1.06-1.06l2.5-2.5a.75.75 0 011.06 0l2.5 2.5a.75.75 0 11-1.06 1.06l-1.22-1.22v3.69A.75.75 0 018 15z"/>
         </svg>
