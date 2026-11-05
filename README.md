@@ -146,11 +146,11 @@
       <td width="58%" align="center" style="border: none; padding: 10px;" valign="middle">
         <img src="./icons/isocalendar.svg" width="560px" alt="Contributions calendar" />
       </td>
-      <!-- Right: GitHub Stats on top, Top Languages below -->
+      <!-- Right: GitHub Stats on top, Streak Stats below -->
       <td width="42%" align="center" style="border: none; padding: 10px;" valign="middle">
         <img src="https://github-readme-stats-fast.vercel.app/api?username=TungNamNguyen&theme=tokyonight&show_icons=true&include_all_commits=true&bg_color=101622&title_color=8AA0B8&text_color=C5CEDA&icon_color=8AA0B8&border_color=2A3548&hide_border=false" width="380" alt="GitHub Stats" />
         <br /><br />
-        <img src="https://github-readme-stats-fast.vercel.app/api/top-langs/?username=TungNamNguyen&layout=compact&theme=tokyonight&bg_color=101622&title_color=8AA0B8&text_color=C5CEDA&icon_color=8AA0B8&border_color=2A3548&hide_border=false" width="380" alt="Top Languages" />
+        <img src="https://streak-stats.demolab.com?user=TungNamNguyen&theme=tokyonight&background=101622&border=2A3548" width="380" alt="GitHub Streak Stats" />
       </td>
     </tr>
   </table>
