@@ -1,18 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="174" height="30" viewBox="0 0 174 30">
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="34" viewBox="0 0 192 34">
   <clipPath id="c">
-    <rect x="1" y="1" width="172" height="28" rx="6" fill="#fff"/>
+    <rect x="1" y="1" width="190" height="32" rx="7" fill="#fff"/>
   </clipPath>
   <g clip-path="url(#c)">
-    <rect x="1" y="1" width="102" height="28" fill="#f8fafc"/>
-    <rect x="102" y="1" width="72" height="28" fill="#eff6ff"/>
-    <line x1="102" y1="1" x2="102" y2="29" stroke="#cbd5e1" stroke-width="1.2"/>
+    <rect x="1" y="1" width="114" height="32" fill="#f8fafc"/>
+    <rect x="114" y="1" width="78" height="32" fill="#eff6ff"/>
+    <line x1="114" y1="1" x2="114" y2="33" stroke="#cbd5e1" stroke-width="1.2"/>
   </g>
-  <rect x="1" y="1" width="172" height="28" rx="6" fill="none" stroke="#cbd5e1" stroke-width="1.2"/>
-  <g transform="translate(12.00, 7.16) scale(0.0625)">
+  <rect x="1" y="1" width="190" height="32" rx="7" fill="none" stroke="#cbd5e1" stroke-width="1.2"/>
+  <g transform="translate(13.00, 8.16) scale(0.0703)">
     <path fill="#7099a6" d="M123.929 11.593v11.641h-20.82v7.571h20.82v23.186h8.139V30.805h21.341v-7.571h-21.341V0h-8.139z"/><path fill="#eb912c" d="M55.884 41.121v16.893H24.369v10.599h31.515v34.307h11.688V68.613H99.56V58.014H67.572V24.228H55.884z"/><path fill="#59879b" d="M187.953 41.121v16.893h-31.515v11.12h31.515v33.786h12.161V69.134h31.514v-11.12h-31.514V24.228h-12.161z"/><path fill="#e8762c" d="M120.901 98.661v18.928H85.837v14.101h35.064v37.855h14.196V131.69h35.063v-14.101h-35.063V79.733h-14.196z"/><path fill="#5b6591" d="M224.01 108.219v11.878h-21.341v9.605h21.341v23.707h10.647v-23.707h21.341v-9.605h-21.341V96.39H224.01z"/><path fill="#7099a6" d="M20.821 109.26v11.357H0v8.044h20.821v22.714h8.138v-22.714l21.341-.757v-7.287H28.959V97.904h-8.138z"/><path fill="#c72035" d="M55.884 162.731v16.893H24.369v11.12h31.515v33.786h12.161v-33.786H99.56v-11.12H68.045v-33.786H55.884z"/><path fill="#1f447e" d="M187.953 162.731v16.893h-31.515v10.6h31.515v34.306h12.161v-34.306h31.514v-10.6h-31.514v-33.786h-12.161z"/><path fill="#5b6591" d="M122.936 205.65v11.83h-21.341v9.606h21.341v23.707h10.647v-23.707h21.341v-9.606h-21.341v-23.707h-10.647z"/>
   </g>
-  <g text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="10.5" font-weight="700" letter-spacing="0.8">
-    <text x="68.0" y="19" fill="#0f172a">TABLEAU</text>
-    <text x="138.0" y="19" fill="#0969da">PUBLIC</text>
+  <g text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="11.5" font-weight="700" letter-spacing="0.8">
+    <text x="75.0" y="21.2" fill="#0f172a">TABLEAU</text>
+    <text x="153.0" y="21.2" fill="#0969da">PUBLIC</text>
   </g>
 </svg>

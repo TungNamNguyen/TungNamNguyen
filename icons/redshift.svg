@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="108" height="38" viewBox="0 0 108 38">
-  <rect x="3" y="3" width="102" height="32" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="116" height="34" viewBox="1 2 116 34">
+  <rect x="3" y="3" width="112" height="32" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
   <g transform="translate(11.03, 7.03) scale(0.2395)">
     
   <polygon points="78.47 23.02 84.17 25.77 84.17 74.08 78.47 76.84 69.45 50 78.47 23.02" fill="#5294cf"/>
@@ -11,5 +11,5 @@
   <rect x="43.17" y="12.42" width="13.67" height="75.16" fill="#2e73b8"/>
 
   </g>
-  <text x="40" y="23.8" fill="#0f172a" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" letter-spacing="0.1">Redshift</text>
+  <text x="40" y="24.2" fill="#0f172a" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="14" font-weight="600" letter-spacing="0.1">Redshift</text>
 </svg>

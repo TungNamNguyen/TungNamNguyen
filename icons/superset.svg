@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="112" height="38" viewBox="0 0 112 38">
-  <rect x="3" y="3" width="106" height="32" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="116" height="34" viewBox="1 2 116 34">
+  <rect x="3" y="3" width="112" height="32" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
   <g transform="translate(14.00, 10.00) scale(0.0703)">
     
   <g transform="translate(0 64)">
@@ -8,5 +8,5 @@
   </g>
 
   </g>
-  <text x="40" y="23.8" fill="#0f172a" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" letter-spacing="0.1">Superset</text>
+  <text x="40" y="24.2" fill="#0f172a" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="14" font-weight="600" letter-spacing="0.1">Superset</text>
 </svg>

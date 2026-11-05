@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="92" height="38" viewBox="0 0 92 38">
-  <rect x="3" y="3" width="86" height="32" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="100" height="34" viewBox="1 2 100 34">
+  <rect x="3" y="3" width="96" height="32" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
   <g transform="translate(14.00, 10.00) scale(0.0703)">
     <defs><linearGradient id="SVG2lcyn7oz" x1="50%" x2="50%" y1="0%" y2="100%"><stop offset="0%" stop-color="#0091e6"/><stop offset="100%" stop-color="#0079bf"/></linearGradient></defs><rect width="256" height="256" fill="url(#SVG2lcyn7oz)" rx="25"/><rect width="78.08" height="112" x="144.64" y="33.28" fill="#fff" rx="12"/><rect width="78.08" height="176" x="33.28" y="33.28" fill="#fff" rx="12"/>
   </g>
-  <text x="40" y="23.8" fill="#0f172a" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" letter-spacing="0.1">Trello</text>
+  <text x="40" y="24.2" fill="#0f172a" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="14" font-weight="600" letter-spacing="0.1">Trello</text>
 </svg>

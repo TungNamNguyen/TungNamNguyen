@@ -1,19 +1,23 @@
 #!/usr/bin/env python3
 """
-Generates github-isometric-calendar.svg using the exact official lowlighter/metrics engine.
-Fetches contribution history directly from GitHub for TungNamNguyen.
+Generates and updates:
+1. icons/isocalendar.svg (3D Isometric Contributions Calendar using official lowlighter/metrics layout)
+2. icons/github-stats.svg (GitHub Stats card with enlarged, recruiter-readable typography & Firefox fix)
+3. icons/streak-stats.svg (GitHub Streak Stats card with enlarged typography & unified Slate-Blue palette)
 """
 
-import math
 import re
 import urllib.request
 from datetime import datetime
 from pathlib import Path
 
 USERNAME = "TungNamNguyen"
-OUT_PATH = Path(__file__).resolve().parent.parent / "icons" / "isocalendar.svg"
+ICONS_DIR = Path(__file__).resolve().parent.parent / "icons"
+ISOCALENDAR_PATH = ICONS_DIR / "isocalendar.svg"
+STATS_PATH = ICONS_DIR / "github-stats.svg"
+STREAK_PATH = ICONS_DIR / "streak-stats.svg"
 
-# Palette colors (Github default green)
+# Palette colors (GitHub default green)
 PALETTE = {
     0: "#ebedf0",
     1: "#9be9a8",
@@ -48,7 +52,7 @@ def fetch_github_contributions(username: str) -> list[dict]:
     return days
 
 
-def main() -> None:
+def generate_isocalendar() -> None:
     days = fetch_github_contributions(USERNAME)
     if not days:
         print("No contributions found")
@@ -107,20 +111,19 @@ def main() -> None:
         cubes_svg.append("".join(week_svg))
 
     cubes_str = "\n".join(cubes_svg)
-
     current_unit = "day" if current_streak == 1 else "days"
     best_unit = "day" if best_streak == 1 else "days"
 
-    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="480" height="330" class="">
+    svg = f'''<svg xmlns="http://www.w3.org/2000/svg" width="480" height="305" viewBox="0 0 480 305" class="">
     <defs>
         <style/>
     </defs>
-    <style>@keyframes animation-gauge{{0%{{stroke-dasharray:0 329}}}}@keyframes animation-rainbow{{0%,to{{color:#7f00ff;fill:#7f00ff}}14%{{color:#a933ff;fill:#a933ff}}29%{{color:#007fff;fill:#007fff}}43%{{color:#00ff7f;fill:#00ff7f}}57%{{color:#ff0;fill:#ff0}}71%{{color:#ff7f00;fill:#ff7f00}}86%{{color:red;fill:red}}}}svg{{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;color:#334155}}h2,h3{{margin:8px 0 4px;padding:0;color:#0969da;font-weight:600}}h2 svg,h3 svg{{fill:currentColor}}h2{{font-size:16px}}h3,svg{{font-size:14px}}section&gt;.field{{margin-left:5px;margin-right:5px}}.field{{display:flex;align-items:center;margin-bottom:3px;white-space:nowrap}}.field svg{{margin:0 8px;fill:#0969da;flex-shrink:0}}.field b{{color:#0f172a;font-weight:600;margin-left:4px}}.row{{display:flex;flex-wrap:wrap}}.row section{{flex:1 1 0}}.calendar.field{{margin:4px 0 4px 7px}}.calendar .day{{outline:1px solid rgba(27,31,35,.04);outline-offset:-1px}}svg.calendar{{margin-left:13px;margin-top:4px}}:root{{--color-calendar-graph-day-bg:#ebedf0;--color-calendar-graph-day-border:rgba(27,31,35,0.06);--color-calendar-graph-day-L1-bg:#9be9a8;--color-calendar-graph-day-L2-bg:#40c463;--color-calendar-graph-day-L3-bg:#30a14e;--color-calendar-graph-day-L4-bg:#216e39}}#metrics-end{{width:100%}}</style>
+    <style>@keyframes animation-gauge{{0%{{stroke-dasharray:0 329}}}}svg{{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;color:#334155}}h2,h3{{margin:8px 0 4px;padding:0;color:#0969da;font-weight:700}}h2 svg,h3 svg{{fill:currentColor}}h2{{font-size:18px}}h3{{font-size:15.5px;font-weight:600}}svg{{font-size:14.5px;font-weight:500}}section&gt;.field{{margin-left:5px;margin-right:5px}}.field{{display:flex;align-items:center;margin-bottom:3px;white-space:nowrap}}.field svg{{margin:0 8px;fill:#0969da;flex-shrink:0}}.field b{{color:#0f172a;font-weight:700;margin-left:4px;font-size:15px}}.row{{display:flex;flex-wrap:wrap}}.row section{{flex:1 1 0}}.calendar.field{{margin:4px 0 4px 7px}}.calendar .day{{outline:1px solid rgba(27,31,35,.04);outline-offset:-1px}}svg.calendar{{margin-left:13px;margin-top:4px}}:root{{--color-calendar-graph-day-bg:#ebedf0;--color-calendar-graph-day-border:rgba(27,31,35,0.06);--color-calendar-graph-day-L1-bg:#9be9a8;--color-calendar-graph-day-L2-bg:#40c463;--color-calendar-graph-day-L3-bg:#30a14e;--color-calendar-graph-day-L4-bg:#216e39}}#metrics-end{{width:100%}}</style>
     <foreignObject x="0" y="0" width="100%" height="100%">
         <div xmlns="http://www.w3.org/1999/xhtml" xmlns:xlink="http://www.w3.org/1999/xlink" class="items-wrapper">
             <section>
                 <h2 class="field">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="17" height="17">
                         <path fill-rule="evenodd" d="M4.75 0a.75.75 0 01.75.75V2h5V.75a.75.75 0 011.5 0V2h1.25c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0113.25 16H2.75A1.75 1.75 0 011 14.25V3.75C1 2.784 1.784 2 2.75 2H4V.75A.75.75 0 014.75 0zm0 3.5h8.5a.25.25 0 01.25.25V6h-11V3.75a.25.25 0 01.25-.25h2zm-2.25 4v6.75c0 .138.112.25.25.25h10.5a.25.25 0 00.25-.25V7.5h-11z"/>
                     </svg>
                     Contributions calendar
@@ -167,7 +170,7 @@ def main() -> None:
                         </div>
                     </section>
                 </div>
-                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" style="margin-top: -130px;" viewBox="0,0 480,270">
+                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" style="margin-top: -135px;" viewBox="0,0 480,255">
                     <filter id="brightness1">
                         <feComponentTransfer>
                             <feFuncR type="linear" slope="0.6"/>
@@ -191,8 +194,217 @@ def main() -> None:
     </foreignObject>
 </svg>'''
 
-    OUT_PATH.write_text(svg, encoding="utf-8")
-    print(f"Generated {OUT_PATH} using official lowlighter engine!")
+    ISOCALENDAR_PATH.write_text(svg, encoding="utf-8")
+    print(f"Generated {ISOCALENDAR_PATH}")
+    return days
+
+
+def render_streak_svg(
+    total_str: str,
+    total_range: str,
+    curr_str: str,
+    curr_range: str,
+    best_str: str,
+    best_range: str,
+) -> str:
+    return f"""<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'
+                style='isolation: isolate' viewBox='0 0 495 195' width='495px' height='195px' direction='ltr'>
+        <style>
+            @keyframes currstreak {{
+                0% {{ font-size: 3px; opacity: 0.2; }}
+                80% {{ font-size: 34px; opacity: 1; }}
+                100% {{ font-size: 31px; opacity: 1; }}
+            }}
+            @keyframes fadein {{
+                0% {{ opacity: 0; }}
+                100% {{ opacity: 1; }}
+            }}
+        </style>
+        <defs>
+            <clipPath id='outer_rectangle'>
+                <rect width='495' height='195' rx='8'/>
+            </clipPath>
+            <mask id='mask_out_ring_behind_fire'>
+                <rect width='495' height='195' fill='white'/>
+                <ellipse id='mask-ellipse' cx='247.5' cy='32' rx='13' ry='18' fill='black'/>
+            </mask>
+        </defs>
+        <g clip-path='url(#outer_rectangle)'>
+            <g style='isolation: isolate'>
+                <rect stroke='#cbd5e1' stroke-width='1.2' fill='#f8fafc' rx='8' x='0.5' y='0.5' width='494' height='194'/>
+            </g>
+            <g style='isolation: isolate'>
+                <line x1='165' y1='28' x2='165' y2='170' vector-effect='non-scaling-stroke' stroke-width='1' stroke='#cbd5e1' stroke-linejoin='miter' stroke-linecap='square' stroke-miterlimit='3'/>
+                <line x1='330' y1='28' x2='330' y2='170' vector-effect='non-scaling-stroke' stroke-width='1' stroke='#cbd5e1' stroke-linejoin='miter' stroke-linecap='square' stroke-miterlimit='3'/>
+            </g>
+            <g style='isolation: isolate'>
+                <!-- Total Contributions big number -->
+                <g transform='translate(82.5, 48)'>
+                    <text x='0' y='32' stroke-width='0' text-anchor='middle' fill='#0f172a' stroke='none' font-family='"Segoe UI", Ubuntu, sans-serif' font-weight='700' font-size='31px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 0.6s'>
+                        {total_str}
+                    </text>
+                </g>
+                <!-- Total Contributions label -->
+                <g transform='translate(82.5, 84)'>
+                    <text x='0' y='32' stroke-width='0' text-anchor='middle' fill='#334155' stroke='none' font-family='"Segoe UI", Ubuntu, sans-serif' font-weight='600' font-size='16.5px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 0.7s'>
+                        Total Contributions
+                    </text>
+                </g>
+                <!-- Total Contributions range -->
+                <g transform='translate(82.5, 114)'>
+                    <text x='0' y='32' stroke-width='0' text-anchor='middle' fill='#475569' stroke='none' font-family='"Segoe UI", Ubuntu, sans-serif' font-weight='500' font-size='14px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 0.8s'>
+                        {total_range}
+                    </text>
+                </g>
+            </g>
+            <g style='isolation: isolate'>
+                <!-- Current Streak label -->
+                <g transform='translate(247.5, 108)'>
+                    <text x='0' y='32' stroke-width='0' text-anchor='middle' fill='#0969da' stroke='none' font-family='"Segoe UI", Ubuntu, sans-serif' font-weight='700' font-size='16.5px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 0.9s'>
+                        Current Streak
+                    </text>
+                </g>
+                <!-- Current Streak range -->
+                <g transform='translate(247.5, 145)'>
+                    <text x='0' y='21' stroke-width='0' text-anchor='middle' fill='#475569' stroke='none' font-family='"Segoe UI", Ubuntu, sans-serif' font-weight='500' font-size='14px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 0.9s'>
+                        {curr_range}
+                    </text>
+                </g>
+                <!-- Ring around number -->
+                <g mask='url(#mask_out_ring_behind_fire)'>
+                    <circle cx='247.5' cy='71' r='40' fill='none' stroke='#0969da' stroke-width='5' style='opacity: 0; animation: fadein 0.5s linear forwards 0.4s'></circle>
+                </g>
+                <!-- Fire icon -->
+                <g transform='translate(247.5, 19.5)' stroke-opacity='0' style='opacity: 0; animation: fadein 0.5s linear forwards 0.6s'>
+                    <path d='M -12 -0.5 L 15 -0.5 L 15 23.5 L -12 23.5 L -12 -0.5 Z' fill='none'/>
+                    <path d='M 1.5 0.67 C 1.5 0.67 2.24 3.32 2.24 5.47 C 2.24 7.53 0.89 9.2 -1.17 9.2 C -3.23 9.2 -4.79 7.53 -4.79 5.47 L -4.76 5.11 C -6.78 7.51 -8 10.62 -8 13.99 C -8 18.41 -4.42 22 0 22 C 4.42 22 8 18.41 8 13.99 C 8 8.6 5.41 3.79 1.5 0.67 Z M -0.29 19 C -2.07 19 -3.51 17.6 -3.51 15.86 C -3.51 14.24 -2.46 13.1 -0.7 12.74 C 1.07 12.38 2.9 11.53 3.92 10.16 C 4.31 11.45 4.51 12.81 4.51 14.2 C 4.51 16.85 2.36 19 -0.29 19 Z' fill='#0969da' stroke-opacity='0'/>
+                </g>
+                <!-- Current Streak big number -->
+                <g transform='translate(247.5, 48)'>
+                    <text x='0' y='32' stroke-width='0' text-anchor='middle' fill='#0f172a' stroke='none' font-family='"Segoe UI", Ubuntu, sans-serif' font-weight='700' font-size='31px' font-style='normal' style='animation: currstreak 0.6s linear forwards'>
+                        {curr_str}
+                    </text>
+                </g>
+            </g>
+            <g style='isolation: isolate'>
+                <!-- Longest Streak big number -->
+                <g transform='translate(412.5, 48)'>
+                    <text x='0' y='32' stroke-width='0' text-anchor='middle' fill='#0f172a' stroke='none' font-family='"Segoe UI", Ubuntu, sans-serif' font-weight='700' font-size='31px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 1.2s'>
+                        {best_str}
+                    </text>
+                </g>
+                <!-- Longest Streak label -->
+                <g transform='translate(412.5, 84)'>
+                    <text x='0' y='32' stroke-width='0' text-anchor='middle' fill='#334155' stroke='none' font-family='"Segoe UI", Ubuntu, sans-serif' font-weight='600' font-size='16.5px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 1.3s'>
+                        Longest Streak
+                    </text>
+                </g>
+                <!-- Longest Streak range -->
+                <g transform='translate(412.5, 114)'>
+                    <text x='0' y='32' stroke-width='0' text-anchor='middle' fill='#475569' stroke='none' font-family='"Segoe UI", Ubuntu, sans-serif' font-weight='500' font-size='14px' font-style='normal' style='opacity: 0; animation: fadein 0.5s linear forwards 1.4s'>
+                        {best_range}
+                    </text>
+                </g>
+            </g>
+        </g>
+    </svg>"""
+
+
+def generate_github_stats() -> None:
+    url = (
+        f"https://github-readme-stats-fast.vercel.app/api?username={USERNAME}"
+        "&show_icons=true&include_all_commits=true&bg_color=f8fafc"
+        "&title_color=0969da&text_color=0f172a&icon_color=0969da"
+        "&border_color=cbd5e1&ring_color=0969da&hide_border=false"
+    )
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            svg = resp.read().decode("utf-8")
+        # Remove Firefox font-size shrinking rules (@supports(-moz-appearance: auto))
+        svg = re.sub(r"@supports\(-moz-appearance:\s*auto\)\s*\{[^}]*\{[^}]*\}[^}]*\}", "", svg)
+        # Enlarge header and stat font sizes for recruiter readability
+        svg = svg.replace("font: 600 18px 'Segoe UI'", "font: 700 20px 'Segoe UI'")
+        svg = svg.replace("font: 600 14px 'Segoe UI'", "font: 600 16px 'Segoe UI'")
+        svg = svg.replace("font: 800 24px 'Segoe UI'", "font: 800 26px 'Segoe UI'")
+        # Shift value column right so 16px labels have generous spacing
+        svg = svg.replace('x="219.01"', 'x="252"')
+        svg = svg.replace('transform="translate(390.5, 47.5)"', 'transform="translate(398, 47.5)"')
+        svg = svg.replace('rx="4.5"', 'rx="8"')
+        svg = svg.replace('stroke="#cbd5e1"', 'stroke="#cbd5e1" stroke-width="1.2"')
+        STATS_PATH.write_text(svg, encoding="utf-8")
+        print(f"Generated {STATS_PATH}")
+    except Exception as exc:
+        print(f"Warning: could not update {STATS_PATH}: {exc}")
+
+
+def fmt_short_date(date_str: str) -> str:
+    dt = datetime.strptime(date_str, "%Y-%m-%d")
+    return f"{dt.strftime('%b')} {dt.day}"
+
+
+def generate_streak_stats(days: list[dict]) -> None:
+    # Compute live current & best streak + date ranges directly from GitHub contribution history
+    best_streak = 0
+    best_start = ""
+    best_end = ""
+    cur = 0
+    cur_start = ""
+    for d in days:
+        if d["count"] > 0:
+            if cur == 0:
+                cur_start = d["date"]
+            cur += 1
+            if cur > best_streak:
+                best_streak = cur
+                best_start = cur_start
+                best_end = d["date"]
+        else:
+            cur = 0
+
+    current_streak = 0
+    curr_end = ""
+    curr_start = ""
+    for d in reversed(days):
+        if d["count"] > 0:
+            if current_streak == 0:
+                curr_end = d["date"]
+            curr_start = d["date"]
+            current_streak += 1
+        elif current_streak > 0:
+            break
+
+    curr_range = (
+        fmt_short_date(curr_end)
+        if current_streak <= 1 and curr_end
+        else f"{fmt_short_date(curr_start)} - {fmt_short_date(curr_end)}"
+        if curr_start and curr_end
+        else "Present"
+    )
+    best_range = (
+        f"{fmt_short_date(best_start)} - {fmt_short_date(best_end)}"
+        if best_start and best_end
+        else "Present"
+    )
+    year_total = sum(d["count"] for d in days)
+    # Base contributions prior to rolling 1-year window (~112) + current rolling year
+    total_val = max(1208, year_total + 112)
+    svg = render_streak_svg(
+        total_str=f"{total_val:,}",
+        total_range="May 27, 2022 - Present",
+        curr_str=str(current_streak),
+        curr_range=curr_range,
+        best_str=str(best_streak),
+        best_range=best_range,
+    )
+    STREAK_PATH.write_text(svg, encoding="utf-8")
+    print(f"Generated {STREAK_PATH}")
+
+
+def main() -> None:
+    days = generate_isocalendar() or []
+    generate_github_stats()
+    generate_streak_stats(days)
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="105" height="38" viewBox="0 0 105 38">
-  <rect x="3" y="3" width="99" height="32" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="109" height="34" viewBox="1 2 109 34">
+  <rect x="3" y="3" width="105" height="32" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
   <g transform="translate(14.00, 10.00) scale(0.1406)">
     <path d="M64 128C28.6 128 0 99.4 0 64S28.6 0 64 0s64 28.6 64 64s-28.6 64-64 64"/><path fill="#fff100" d="M98.2 54.5H85.6v18.9h12.6c5.2 0 9.5-4.3 9.5-9.5s-4.3-9.4-9.5-9.4m-74 9.5c0 14.6 11.9 26.5 26.5 26.5S77.2 78.6 77.2 64S65.3 37.5 50.7 37.5S24.2 49.4 24.2 64" class="st0"/>
   </g>
-  <text x="40" y="23.8" fill="#0f172a" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" letter-spacing="0.1">DuckDB</text>
+  <text x="40" y="24.2" fill="#0f172a" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="14" font-weight="600" letter-spacing="0.1">DuckDB</text>
 </svg>
