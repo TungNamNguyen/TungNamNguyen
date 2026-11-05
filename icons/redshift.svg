@@ -1,15 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="104" height="34" viewBox="0 0 104 34">
-  <rect x="2" y="2" width="100" height="30" rx="7" fill="#2b3440" stroke="#4c566a" stroke-width="1.2"/>
-  <g transform="translate(9.03, 5.03) scale(0.2395)">
+<svg xmlns="http://www.w3.org/2000/svg" width="108" height="38" viewBox="0 0 108 38">
+  <rect x="3" y="3" width="102" height="32" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+  <g transform="translate(11.03, 7.03) scale(0.2395)">
     
-  <polygon points="78.47 23.02 84.17 25.77 84.17 74.08 78.47 76.84 69.45 50 78.47 23.02" fill="#93c5fd"/>
-  <polygon points="21.53 23.02 15.84 25.77 15.84 74.08 21.53 76.84 35.77 50 21.53 23.02" fill="#38bdf8"/>
-  <polygon points="50 69.89 78.47 76.82 78.47 23.02 50 29.95 50 69.89" fill="#38bdf8"/>
-  <polygon points="50 69.89 21.53 76.82 21.53 23.02 50 29.95 50 69.89" fill="#93c5fd"/>
-  <polygon points="56.83 87.58 67.72 82.15 67.72 17.85 56.83 12.42 46.02 48.16 56.83 87.58" fill="#93c5fd"/>
-  <polygon points="43.17 87.58 32.29 82.15 32.29 17.85 43.17 12.42 52.85 50 43.17 87.58" fill="#38bdf8"/>
-  <rect x="43.17" y="12.42" width="13.67" height="75.16" fill="#60a5fa"/>
+  <polygon points="78.47 23.02 84.17 25.77 84.17 74.08 78.47 76.84 69.45 50 78.47 23.02" fill="#5294cf"/>
+  <polygon points="21.53 23.02 15.84 25.77 15.84 74.08 21.53 76.84 35.77 50 21.53 23.02" fill="#205b99"/>
+  <polygon points="50 69.89 78.47 76.82 78.47 23.02 50 29.95 50 69.89" fill="#205b99"/>
+  <polygon points="50 69.89 21.53 76.82 21.53 23.02 50 29.95 50 69.89" fill="#5294cf"/>
+  <polygon points="56.83 87.58 67.72 82.15 67.72 17.85 56.83 12.42 46.02 48.16 56.83 87.58" fill="#5294cf"/>
+  <polygon points="43.17 87.58 32.29 82.15 32.29 17.85 43.17 12.42 52.85 50 43.17 87.58" fill="#205b99"/>
+  <rect x="43.17" y="12.42" width="13.67" height="75.16" fill="#2e73b8"/>
 
   </g>
-  <text x="38" y="21.8" fill="#f8fafc" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" letter-spacing="0.15">Redshift</text>
+  <text x="40" y="23.8" fill="#0f172a" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" letter-spacing="0.1">Redshift</text>
 </svg>

@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="69" height="34" viewBox="0 0 69 34">
-  <rect x="2" y="2" width="65" height="30" rx="7" fill="#2b3440" stroke="#4c566a" stroke-width="1.2"/>
-  <g transform="translate(12.00, 8.34) scale(0.2250)">
+<svg xmlns="http://www.w3.org/2000/svg" width="73" height="38" viewBox="0 0 73 38">
+  <rect x="3" y="3" width="67" height="32" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+  <g transform="translate(14.00, 10.34) scale(0.2250)">
     
 <rect y="6.42949" width="71.8213" height="70.3518" fill="#C6D300"/>
 <g clip-path="url(#clip0_0_3)">
@@ -24,5 +24,5 @@
 </defs>
 
   </g>
-  <text x="38" y="21.8" fill="#f8fafc" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" letter-spacing="0.15">dlt</text>
+  <text x="40" y="23.8" fill="#0f172a" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" letter-spacing="0.1">dlt</text>
 </svg>

@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="154" height="34" viewBox="0 0 154 34">
-  <rect x="2" y="2" width="150" height="30" rx="7" fill="#2b3440" stroke="#4c566a" stroke-width="1.2"/>
-  <g transform="translate(12.00, 8.00) scale(0.0703)">
+<svg xmlns="http://www.w3.org/2000/svg" width="158" height="38" viewBox="0 0 158 38">
+  <rect x="3" y="3" width="152" height="32" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+  <g transform="translate(14.00, 10.00) scale(0.0703)">
     
 <g clip-path="url(#microsoft-fabric_clip0_1263_124590)">
 <path fill-rule="evenodd" clip-rule="evenodd" d="M10.496 176.634L6.74669 190.356C5.34937 194.746 3.39205 201.194 2.33606 206.932C0.832069 210.9 0.0107422 215.204 0.0107422 219.7C0.0107422 238.239 14.016 253.502 32.0212 255.497C37.0878 256.228 42.8211 256.19 49.2477 255.246L78.7728 251.172C86.1967 250.148 92.2927 244.788 94.266 237.556L114.586 162.922L10.496 176.634Z" fill="url(#microsoft-fabric_paint0_linear_1263_124590)"/>
@@ -89,5 +89,5 @@
 </defs>
 
   </g>
-  <text x="38" y="21.8" fill="#f8fafc" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" letter-spacing="0.15">Microsoft Fabric</text>
+  <text x="40" y="23.8" fill="#0f172a" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" letter-spacing="0.1">Microsoft Fabric</text>
 </svg>

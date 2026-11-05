@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="112" height="34" viewBox="0 0 112 34">
-  <rect x="2" y="2" width="108" height="30" rx="7" fill="#2b3440" stroke="#4c566a" stroke-width="1.2"/>
-  <g transform="translate(13.89, 8.00) scale(0.0556)">
+<svg xmlns="http://www.w3.org/2000/svg" width="116" height="38" viewBox="0 0 116 38">
+  <rect x="3" y="3" width="110" height="32" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+  <g transform="translate(15.89, 10.00) scale(0.0556)">
     <g fill="#509ee3"><ellipse cx="19.394" cy="82.757" rx="19.394" ry="19.704"/><ellipse cx="19.394" cy="137.928" rx="19.394" ry="19.704"/><ellipse cx="73.697" cy="82.757" opacity=".2" rx="19.394" ry="19.704"/><ellipse cx="73.697" cy="138.464" rx="19.394" ry="19.704"/><ellipse cx="128" cy="82.757" opacity=".2" rx="19.394" ry="19.704"/><ellipse cx="128" cy="19.704" opacity=".2" rx="19.394" ry="19.704"/><ellipse cx="128" cy="138.464" opacity=".2" rx="19.394" ry="19.704"/><ellipse cx="182.303" cy="82.757" opacity=".2" rx="19.394" ry="19.704"/><ellipse cx="236.606" cy="82.757" rx="19.394" ry="19.704"/><ellipse cx="182.303" cy="138.464" rx="19.394" ry="19.704"/><ellipse cx="236.606" cy="138.464" rx="19.394" ry="19.704"/><ellipse cx="19.394" cy="193.099" rx="19.394" ry="19.704"/><ellipse cx="73.697" cy="193.635" opacity=".2" rx="19.394" ry="19.704"/><ellipse cx="128" cy="193.635" rx="19.394" ry="19.704"/><ellipse cx="182.303" cy="193.635" opacity=".2" rx="19.394" ry="19.704"/><ellipse cx="236.606" cy="193.635" rx="19.394" ry="19.704"/><ellipse cx="19.394" cy="248.27" rx="19.394" ry="19.704"/><ellipse cx="73.697" cy="248.806" opacity=".2" rx="19.394" ry="19.704"/><ellipse cx="128" cy="248.806" opacity=".2" rx="19.394" ry="19.704"/><ellipse cx="128" cy="303.977" opacity=".2" rx="19.394" ry="19.704"/><ellipse cx="182.303" cy="248.806" opacity=".2" rx="19.394" ry="19.704"/><ellipse cx="236.606" cy="248.806" rx="19.394" ry="19.704"/></g>
   </g>
-  <text x="38" y="21.8" fill="#f8fafc" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" letter-spacing="0.15">Metabase</text>
+  <text x="40" y="23.8" fill="#0f172a" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" letter-spacing="0.1">Metabase</text>
 </svg>
