@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="194" height="28" viewBox="0 0 194 28">
+  <clipPath id="r">
+    <rect width="194" height="28" rx="4" fill="#fff"/>
+  </clipPath>
+  <g clip-path="url(#r)">
+    <rect width="112" height="28" fill="#4a525d"/>
+    <rect x="112" width="82" height="28" fill="#333d4b"/>
+  </g>
+  <g transform="translate(10.00, 6.00) scale(0.6667)">
+    <g fill="none" stroke="#38BDF8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></g>
+  </g>
+  <g fill="#fff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="10" font-weight="bold" letter-spacing="1">
+    <text x="72.0" y="18">PORTFOLIO</text>
+    <text x="153.0" y="18">WEBSITE</text>
+  </g>
+</svg>

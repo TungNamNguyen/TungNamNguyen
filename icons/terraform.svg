@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="115" height="34" viewBox="0 0 115 34">
+  <rect x="2" y="2" width="111" height="30" rx="7" fill="#2b3440" stroke="#4c566a" stroke-width="1.2"/>
+  <g transform="translate(13.08, 8.00) scale(0.0619)">
+    <path fill="#818cf8" d="M176.485 188.994L256 143.127V51.249l-79.515 45.963z"/><path fill="#a5b4fc" d="m88.243 51.249l79.515 45.963v91.782L88.243 143.08M0 91.83l79.515 45.916v-91.83L0 0m88.243 244.994l79.515 45.915v-91.83l-79.515-45.915"/>
+  </g>
+  <text x="38" y="21.8" fill="#f8fafc" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" letter-spacing="0.15">Terraform</text>
+</svg>

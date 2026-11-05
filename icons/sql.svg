@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="77" height="34" viewBox="0 0 77 34">
+  <rect x="2" y="2" width="73" height="30" rx="7" fill="#2b3440" stroke="#4c566a" stroke-width="1.2"/>
+  <g transform="translate(12.00, 8.00) scale(0.7500)">
+    
+  <ellipse cx="12" cy="5" rx="8" ry="3" fill="#38BDF8"/>
+  <path d="M4 5v6c0 1.66 3.58 3 8 3s8-1.34 8-3V5" fill="none" stroke="#38BDF8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M4 11v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6" fill="none" stroke="#38BDF8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <ellipse cx="12" cy="5" rx="8" ry="3" fill="none" stroke="#7DD3FC" stroke-width="2"/>
+
+  </g>
+  <text x="38" y="21.8" fill="#f8fafc" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" letter-spacing="0.15">SQL</text>
+</svg>

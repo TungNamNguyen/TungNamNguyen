@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="119" height="34" viewBox="0 0 119 34">
+  <rect x="2" y="2" width="115" height="30" rx="7" fill="#2b3440" stroke="#4c566a" stroke-width="1.2"/>
+  <g transform="translate(12.00, 8.00) scale(0.7500)">
+    <path fill="#FF5733" d="M.95 14.184L12 20.403l9.919-5.55v2.21L12 22.662l-10.484-5.96l-.565.308v.77L12 24l11.05-6.218v-4.317l-.515-.309L12 19.118l-9.867-5.653v-2.21L12 16.805l11.05-6.218V6.32l-.515-.308L12 11.974L2.647 6.681L12 1.388l7.76 4.368l.668-.411v-.566L12 0L.95 6.27v.72L12 13.207l9.919-5.55v2.26L12 15.52L1.516 9.56l-.565.308Z"/>
+  </g>
+  <text x="38" y="21.8" fill="#f8fafc" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif" font-size="13" font-weight="600" letter-spacing="0.15">Databricks</text>
+</svg>

@@ -1,0 +1,40 @@
+name: Update Contributions Calendar
+
+on:
+  schedule:
+    # Chạy tự động mỗi ngày lúc 00:00 UTC (07:00 sáng giờ Việt Nam)
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "icons/isocalendar.svg"
+
+permissions:
+  contents: write
+
+jobs:
+  update-calendar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Generate 3D Isometric Contributions Calendar
+        run: python3 scripts/generate_isocalendar.py
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add icons/isocalendar.svg
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update 3D contributions calendar"
+            git push
+          fi
