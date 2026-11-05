@@ -7,26 +7,26 @@
 
   <p>
     <a href="https://tungnguyen-portfolio.vercel.app/">
-      <img src="./icons/badge-portfolio.svg" height="28" alt="Portfolio Website" />
+      <img src="./icons/badge-portfolio.svg" height="30" alt="Portfolio Website" />
     </a>
     &nbsp;
     <a href="https://www.linkedin.com/in/nguyennamtung2003/">
-      <img src="./icons/badge-linkedin.svg" height="28" alt="LinkedIn Profile" />
+      <img src="./icons/badge-linkedin.svg" height="30" alt="LinkedIn Profile" />
     </a>
     &nbsp;
     <a href="https://public.tableau.com/app/profile/tung.nguyen.nam/vizzes">
-      <img src="./icons/badge-tableau.svg" height="28" alt="Tableau Public" />
+      <img src="./icons/badge-tableau.svg" height="30" alt="Tableau Public" />
     </a>
     &nbsp;
     <a href="mailto:nguyennamtung123@gmail.com">
-      <img src="./icons/badge-email.svg" height="28" alt="Email Contact" />
+      <img src="./icons/badge-email.svg" height="30" alt="Email Contact" />
     </a>
   </p>
 </div>
 
 ### 💼 Experience
 
-<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png" width="100%" />
+<img src="./icons/divider.svg" width="100%" alt="" />
 
 <table>
   <tr>
@@ -58,7 +58,7 @@
 
 ### 🛠️ Skills
 
-<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png" width="100%" />
+<img src="./icons/divider.svg" width="100%" alt="" />
 
 <table>
   <tr>
@@ -137,7 +137,7 @@
 
 ### 📊 GitHub Stats
 
-<img src="https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/aqua.png" width="100%" />
+<img src="./icons/divider.svg" width="100%" alt="" />
 
 <div align="center">
   <table border="0" style="border-collapse: collapse; border: none;">
@@ -148,9 +148,9 @@
       </td>
       <!-- Right: GitHub Stats on top, Streak Stats below -->
       <td width="42%" align="center" style="border: none; padding: 10px;" valign="middle">
-        <img src="https://github-readme-stats-fast.vercel.app/api?username=TungNamNguyen&theme=tokyonight&show_icons=true&include_all_commits=true&bg_color=101622&title_color=8AA0B8&text_color=C5CEDA&icon_color=8AA0B8&border_color=2A3548&hide_border=false" width="380" alt="GitHub Stats" />
+        <img src="https://github-readme-stats-fast.vercel.app/api?username=TungNamNguyen&show_icons=true&include_all_commits=true&bg_color=f8fafc&title_color=0969da&text_color=0f172a&icon_color=0969da&border_color=cbd5e1&ring_color=0969da&hide_border=false" width="380" alt="GitHub Stats" />
         <br /><br />
-        <img src="https://streak-stats.demolab.com?user=TungNamNguyen&theme=tokyonight&background=101622&border=2A3548" width="380" alt="GitHub Streak Stats" />
+        <img src="https://streak-stats.demolab.com?user=TungNamNguyen&background=F8FAFC&border=CBD5E1&stroke=CBD5E1&ring=0969DA&fire=0969DA&currStreakNum=0F172A&sideNums=0F172A&currStreakLabel=0969DA&sideLabels=334155&dates=64748B" width="380" alt="GitHub Streak Stats" />
       </td>
     </tr>
   </table>
