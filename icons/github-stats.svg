@@ -9,7 +9,7 @@
         aria-labelledby="descId"
       >
         <title id="titleId">Nam Tung Nguyen's GitHub Stats, Rank: C+</title>
-        <desc id="descId">Total Stars Earned: 1, Total Commits  : 1050, Total PRs: 3, Total Issues: 1, Contributed to (last year): 0</desc>
+        <desc id="descId">Total Stars Earned: 1, Total Commits  : 1062, Total PRs: 3, Total Issues: 1, Contributed to (last year): 0</desc>
         <style>
           .header {
             font: 600 19.5px 'Segoe UI', Ubuntu, Sans-Serif;
@@ -67,7 +67,7 @@
         stroke-dashoffset: 251.32741228718345;
       }
       to {
-        stroke-dashoffset: 217.91382925972525;
+        stroke-dashoffset: 217.74625438904235;
       }
     }
   
