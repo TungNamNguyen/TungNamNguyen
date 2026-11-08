@@ -74,7 +74,6 @@
       <a href="https://www.snowflake.com"><img src="./icons/snowflake.svg" height="34" alt="Snowflake" /></a>
       <a href="https://www.databricks.com"><img src="./icons/databricks.svg" height="34" alt="Databricks" /></a>
       <a href="https://www.microsoft.com/en-us/microsoft-fabric"><img src="./icons/fabric.svg" height="34" alt="Microsoft Fabric" /></a>
-      <a href="https://duckdb.org"><img src="./icons/duckdb.svg" height="34" alt="DuckDB" /></a>
     </td>
   </tr>
   <tr>
@@ -105,6 +104,7 @@
       <a href="https://www.postgresql.org"><img src="./icons/postgresql.svg" height="34" alt="PostgreSQL" /></a>
       <a href="https://www.microsoft.com/en-us/sql-server"><img src="./icons/sqlserver.svg" height="34" alt="SQL Server" /></a>
       <a href="https://www.mysql.com"><img src="./icons/mysql.svg" height="34" alt="MySQL" /></a>
+      <a href="https://duckdb.org"><img src="./icons/duckdb.svg" height="34" alt="DuckDB" /></a>
       <a href="https://www.sqlite.org"><img src="./icons/sqlite.svg" height="34" alt="SQLite" /></a>
     </td>
   </tr>
