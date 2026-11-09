@@ -6,6 +6,10 @@ on:
     - cron: "0 0 * * *"
   workflow_dispatch:
 
+concurrency:
+  group: update-isocalendar
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
@@ -15,14 +19,20 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Generate 3D Isometric Contributions Calendar & Stats Cards
-        run: python3 scripts/generate_isocalendar.py
+      - name: Sync latest main & generate 3D Contributions Calendar and Stats Cards
+        run: |
+          git fetch origin main
+          git checkout -B main origin/main
+          python3 scripts/generate_isocalendar.py
 
       - name: Commit and push if changed
         run: |
@@ -31,5 +41,6 @@ jobs:
           git add icons/isocalendar.svg icons/github-stats.svg icons/streak-stats.svg
           if ! git diff --cached --quiet; then
             git commit -m "chore: update GitHub stats and 3D contributions calendar"
-            git push
+            git pull --rebase --autostash -X theirs origin main
+            git push origin HEAD:main
           fi
