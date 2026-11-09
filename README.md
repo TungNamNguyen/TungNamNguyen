@@ -6,21 +6,10 @@
   </p>
 
   <p>
-    <a href="https://tungnguyen-portfolio.vercel.app/">
-      <img src="./icons/badge-portfolio.svg" height="32" alt="Portfolio Website" />
-    </a>
-    &nbsp;
-    <a href="https://www.linkedin.com/in/nguyennamtung2003/">
-      <img src="./icons/badge-linkedin.svg" height="32" alt="LinkedIn Profile" />
-    </a>
-    &nbsp;
-    <a href="https://public.tableau.com/app/profile/tung.nguyen.nam/vizzes">
-      <img src="./icons/badge-tableau.svg" height="32" alt="Tableau Public" />
-    </a>
-    &nbsp;
-    <a href="mailto:nguyennamtung123@gmail.com">
-      <img src="./icons/badge-email.svg" height="32" alt="Email Contact" />
-    </a>
+    <a href="https://tungnguyen-portfolio.vercel.app/"><img src="./icons/badge-portfolio.svg" height="32" alt="Portfolio Website" /></a>&nbsp;
+    <a href="https://www.linkedin.com/in/nguyennamtung2003/"><img src="./icons/badge-linkedin.svg" height="32" alt="LinkedIn Profile" /></a>&nbsp;
+    <a href="https://public.tableau.com/app/profile/tung.nguyen.nam/vizzes"><img src="./icons/badge-tableau.svg" height="32" alt="Tableau Public" /></a>&nbsp;
+    <a href="mailto:nguyennamtung123@gmail.com"><img src="./icons/badge-email.svg" height="32" alt="Email Contact" /></a>
   </p>
 </div>
 
