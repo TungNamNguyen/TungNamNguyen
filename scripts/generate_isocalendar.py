@@ -1,25 +1,42 @@
 #!/usr/bin/env python3
 """
-Generates and updates:
-1. icons/isocalendar.svg (Exact lowlighter/metrics 3D Isometric Contributions Calendar layout)
-2. icons/github-stats.svg (GitHub Stats card matched to template & calibrated for width="380")
-3. icons/streak-stats.svg (GitHub Streak Stats card matched to template & calibrated for width="380")
+Production-grade generator for GitHub Profile SVG assets:
+1. icons/isocalendar.svg  (3D Isometric Contributions Calendar - 52-week rolling window)
+2. icons/github-stats.svg (GitHub Stats Card - native renderer, zero 3rd-party Vercel dependency)
+3. icons/streak-stats.svg (GitHub Streak Stats Card - exact all-time multi-year history since 2022)
+
+Architecture:
+- Primary Data Engine: Official GitHub GraphQL API v4 + REST Search API (via GITHUB_TOKEN / GH_TOKEN).
+- Fallback Data Engine: Multi-year GitHub HTML contributions + public REST API v3 (for local tokenless runs).
+- Resilience: Exponential backoff retries, strict XML validation (ElementTree), and atomic POSIX file writes.
 """
 
+from __future__ import annotations
+
+import json
+import math
+import os
 import re
 import time
 import urllib.error
 import urllib.request
-from datetime import datetime
+import xml.etree.ElementTree as ET
+from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any
 
 USERNAME = "TungNamNguyen"
+DISPLAY_NAME = "Nam Tung Nguyen"
+ACCOUNT_START_YEAR = 2022
+ACCOUNT_START_DATE = "2022-05-27"
+ACCOUNT_START_LABEL = "May 27, 2022"
+
 ICONS_DIR = Path(__file__).resolve().parent.parent / "icons"
 ISOCALENDAR_PATH = ICONS_DIR / "isocalendar.svg"
 STATS_PATH = ICONS_DIR / "github-stats.svg"
 STREAK_PATH = ICONS_DIR / "streak-stats.svg"
 
-# Palette colors (GitHub default green)
+# GitHub default green contribution palette
 PALETTE = {
     0: "#ebedf0",
     1: "#9be9a8",
@@ -28,34 +45,268 @@ PALETTE = {
     4: "#216e39",
 }
 
+GRAPHQL_LEVEL_MAP = {
+    "NONE": 0,
+    "FIRST_QUARTILE": 1,
+    "SECOND_QUARTILE": 2,
+    "THIRD_QUARTILE": 3,
+    "FOURTH_QUARTILE": 4,
+}
 
-def fetch_github_contributions(username: str, max_retries: int = 4) -> list[dict]:
-    url = f"https://github.com/users/{username}/contributions"
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+
+def get_github_token() -> str:
+    """Return GitHub API token from environment if available."""
+    return (os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN") or "").strip()
+
+
+def http_request(
+    url: str,
+    *,
+    method: str = "GET",
+    headers: dict[str, str] | None = None,
+    data: bytes | None = None,
+    timeout: int = 30,
+    max_retries: int = 4,
+) -> tuple[str, dict[str, str]]:
+    """Execute an HTTP request with exponential backoff retries."""
+    req_headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+            "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+        ),
     }
-    html = ""
+    if headers:
+        req_headers.update(headers)
+
     for attempt in range(1, max_retries + 1):
         try:
-            req = urllib.request.Request(url, headers=headers)
-            with urllib.request.urlopen(req, timeout=30) as resp:
-                html = resp.read().decode("utf-8")
-                if html:
-                    break
-        except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, Exception) as exc:
-            print(f"[Attempt {attempt}/{max_retries}] Fetching contributions failed: {exc}")
+            req = urllib.request.Request(url, data=data, headers=req_headers, method=method)
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                body = resp.read().decode("utf-8")
+                resp_headers = {k.lower(): v for k, v in resp.headers.items()}
+                return body, resp_headers
+        except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, OSError) as exc:
+            print(f"[HTTP Attempt {attempt}/{max_retries}] {method} {url} failed: {exc}")
             if attempt < max_retries:
                 sleep_secs = attempt * 3
-                print(f"Waiting {sleep_secs}s before retry...")
                 time.sleep(sleep_secs)
             else:
-                print(f"Error: All {max_retries} attempts failed to fetch contributions. Keeping existing SVGs.")
-                return []
+                raise
+    return "", {}
 
-    if not html:
-        return []
 
+def atomic_write_svg(path: Path, svg_content: str) -> bool:
+    """Validate XML/SVG syntax and write atomically via a temporary file."""
+    content = svg_content.strip()
+    if not content.startswith("<svg") or not content.endswith("</svg>"):
+        print(f"Error: Invalid SVG boundary for {path.name}. Keeping existing file.")
+        return False
+    try:
+        ET.fromstring(content)
+    except ET.ParseError as exc:
+        print(f"Error: XML validation failed for {path.name}: {exc}. Keeping existing file.")
+        return False
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = path.with_suffix(".svg.tmp")
+    try:
+        tmp_path.write_text(content + "\n", encoding="utf-8")
+        os.replace(tmp_path, path)
+        print(f"Validated & wrote {path}")
+        return True
+    except Exception as exc:
+        print(f"Error writing {path}: {exc}")
+        if tmp_path.exists():
+            tmp_path.unlink(missing_ok=True)
+        return False
+
+
+def fetch_total_commits_search(username: str, token: str = "") -> int | None:
+    """Fetch all-time commits authored by username via GitHub REST Search API."""
+    url = f"https://api.github.com/search/commits?q=author:{username}"
+    headers = {"Accept": "application/vnd.github.cloak-preview+json"}
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    try:
+        body, _ = http_request(url, headers=headers, timeout=20, max_retries=3)
+        payload = json.loads(body)
+        total = payload.get("total_count")
+        if isinstance(total, int) and total >= 0:
+            return total
+    except Exception as exc:
+        print(f"Warning: commit search API fallback triggered: {exc}")
+    return None
+
+
+def fetch_via_graphql(username: str, token: str) -> dict[str, Any] | None:
+    """
+    Primary Production Engine:
+    Fetch rolling contributions, multi-year history (2022..present), and user stats
+    in a single official GitHub GraphQL API v4 call.
+    """
+    current_year = max(datetime.now(timezone.utc).year, ACCOUNT_START_YEAR)
+    years = list(range(ACCOUNT_START_YEAR, current_year + 1))
+
+    year_queries = []
+    for y in years:
+        year_queries.append(
+            f"""
+            y{y}: contributionsCollection(from: "{y}-01-01T00:00:00Z", to: "{y}-12-31T23:59:59Z") {{
+              totalCommitContributions
+              restrictedContributionsCount
+              contributionCalendar {{
+                totalContributions
+                weeks {{
+                  contributionDays {{
+                    date
+                    contributionCount
+                    contributionLevel
+                  }}
+                }}
+              }}
+            }}
+            """
+        )
+
+    query = f"""
+    query($login: String!) {{
+      user(login: $login) {{
+        name
+        createdAt
+        followers {{ totalCount }}
+        pullRequests(states: [OPEN, CLOSED, MERGED]) {{ totalCount }}
+        openIssues: issues(states: OPEN) {{ totalCount }}
+        closedIssues: issues(states: CLOSED) {{ totalCount }}
+        repositoriesContributedTo(
+          first: 1,
+          contributionTypes: [COMMIT, ISSUE, PULL_REQUEST, REPOSITORY]
+        ) {{ totalCount }}
+        repositories(
+          first: 100,
+          ownerAffiliations: OWNER,
+          isFork: false,
+          orderBy: {{direction: DESC, field: STARGAZERS}}
+        ) {{
+          nodes {{
+            stargazers {{ totalCount }}
+          }}
+        }}
+        rolling: contributionsCollection {{
+          totalCommitContributions
+          totalPullRequestReviewContributions
+          restrictedContributionsCount
+          contributionCalendar {{
+            totalContributions
+            weeks {{
+              contributionDays {{
+                date
+                contributionCount
+                contributionLevel
+              }}
+            }}
+          }}
+        }}
+        {"".join(year_queries)}
+      }}
+    }}
+    """
+
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json",
+        "Accept": "application/vnd.github.v4+json",
+    }
+    payload = json.dumps({"query": query, "variables": {"login": username}}).encode("utf-8")
+
+    try:
+        body, _ = http_request(
+            "https://api.github.com/graphql",
+            method="POST",
+            headers=headers,
+            data=payload,
+            timeout=30,
+            max_retries=4,
+        )
+        resp_json = json.loads(body)
+        if "errors" in resp_json or not resp_json.get("data", {}).get("user"):
+            print(f"GraphQL returned errors: {resp_json.get('errors')}")
+            return None
+
+        user = resp_json["data"]["user"]
+
+        # Parse rolling 1-year window
+        rolling_days: list[dict[str, Any]] = []
+        for week in user["rolling"]["contributionCalendar"]["weeks"]:
+            for day in week["contributionDays"]:
+                rolling_days.append(
+                    {
+                        "date": day["date"],
+                        "count": int(day["contributionCount"]),
+                        "level": GRAPHQL_LEVEL_MAP.get(day["contributionLevel"], 0),
+                    }
+                )
+        rolling_days.sort(key=lambda x: x["date"])
+        max_date = rolling_days[-1]["date"] if rolling_days else datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+        # Parse all-time multi-year history
+        all_days_map: dict[str, dict[str, Any]] = {}
+        graphql_commits_sum = 0
+        for y in years:
+            y_col = user.get(f"y{y}")
+            if not y_col:
+                continue
+            graphql_commits_sum += int(y_col.get("totalCommitContributions", 0)) + int(
+                y_col.get("restrictedContributionsCount", 0)
+            )
+            for week in y_col["contributionCalendar"]["weeks"]:
+                for day in week["contributionDays"]:
+                    d_str = day["date"]
+                    if ACCOUNT_START_DATE <= d_str <= max_date:
+                        all_days_map[d_str] = {
+                            "date": d_str,
+                            "count": int(day["contributionCount"]),
+                            "level": GRAPHQL_LEVEL_MAP.get(day["contributionLevel"], 0),
+                        }
+
+        all_days = [all_days_map[k] for k in sorted(all_days_map)]
+        stars = sum(
+            int(node["stargazers"]["totalCount"])
+            for node in (user.get("repositories", {}).get("nodes") or [])
+        )
+        prs = int(user.get("pullRequests", {}).get("totalCount", 0))
+        issues = int(user.get("openIssues", {}).get("totalCount", 0)) + int(
+            user.get("closedIssues", {}).get("totalCount", 0)
+        )
+        followers = int(user.get("followers", {}).get("totalCount", 0))
+        contributed_to = int(user.get("repositoriesContributedTo", {}).get("totalCount", 0))
+        reviews = int(user["rolling"].get("totalPullRequestReviewContributions", 0))
+
+        search_commits = fetch_total_commits_search(username, token=token)
+        total_commits = search_commits if search_commits is not None else max(
+            graphql_commits_sum, sum(d["count"] for d in all_days)
+        )
+
+        print("Successfully fetched all data via official GitHub GraphQL API.")
+        return {
+            "rolling_days": rolling_days,
+            "all_days": all_days,
+            "stats": {
+                "stars": stars,
+                "commits": total_commits,
+                "prs": prs,
+                "issues": issues,
+                "reviews": reviews,
+                "contributed_to": contributed_to,
+                "followers": followers,
+            },
+        }
+    except Exception as exc:
+        print(f"Warning: GraphQL fetch failed ({exc}). Falling back to public endpoints.")
+        return None
+
+
+def parse_contributions_html(html: str) -> list[dict[str, Any]]:
+    """Parse GitHub contributions HTML fragment into sorted list of daily dicts."""
     tds = re.findall(
         r'<td[^>]*data-date="([^"]+)"[^>]*id="([^"]+)"[^>]*data-level="(\d+)"[^>]*>',
         html,
@@ -64,48 +315,192 @@ def fetch_github_contributions(username: str, max_retries: int = 4) -> list[dict
         re.findall(r'<tool-tip[^>]*for="([^"]+)"[^>]*>(.*?)</tool-tip>', html, flags=re.S)
     )
 
-    days = []
+    days: list[dict[str, Any]] = []
     for date_str, elem_id, level_str in tds:
         tip = tooltips.get(elem_id, "")
-        m = re.search(r"(\d+)\s+contribution", tip)
-        count = int(m.group(1)) if m else 0
+        m = re.search(r"([\d,]+)\s+contribution", tip)
+        count = int(m.group(1).replace(",", "")) if m else 0
         days.append({"date": date_str, "count": count, "level": int(level_str)})
 
     days.sort(key=lambda x: x["date"])
     return days
 
 
-def generate_isocalendar() -> list[dict]:
-    days = fetch_github_contributions(USERNAME)
-    if not days:
-        print("Warning: No contributions fetched. Keeping existing isocalendar.svg")
-        return []
+def fetch_via_public_endpoints(username: str) -> dict[str, Any] | None:
+    """
+    Fallback Engine (when GITHUB_TOKEN is not set locally):
+    Fetches rolling window + multi-year history (2022..present) + REST API v3 user stats.
+    """
+    html_headers = {
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    }
+    try:
+        rolling_html, _ = http_request(
+            f"https://github.com/users/{username}/contributions",
+            headers=html_headers,
+            timeout=30,
+            max_retries=4,
+        )
+    except Exception as exc:
+        print(f"Error: Failed to fetch rolling contributions HTML: {exc}")
+        return None
 
-    counts = [d["count"] for d in days]
-    reference = max(counts) if counts else 1
-    average = sum(counts) / len(counts) if counts else 0
+    rolling_days = parse_contributions_html(rolling_html)
+    if not rolling_days:
+        return None
 
+    max_date = rolling_days[-1]["date"]
+    end_year = max(int(max_date[:4]), ACCOUNT_START_YEAR)
+
+    all_days_map: dict[str, dict[str, Any]] = {}
+    for year in range(ACCOUNT_START_YEAR, end_year + 1):
+        url = f"https://github.com/users/{username}/contributions?from={year}-01-01&to={year}-12-31"
+        try:
+            year_html, _ = http_request(url, headers=html_headers, timeout=30, max_retries=4)
+            for d in parse_contributions_html(year_html):
+                if ACCOUNT_START_DATE <= d["date"] <= max_date:
+                    all_days_map[d["date"]] = d
+        except Exception as exc:
+            print(f"Warning: Failed to fetch contributions for year {year}: {exc}")
+            return None
+
+    all_days = [all_days_map[k] for k in sorted(all_days_map)]
+
+    # Fetch user stats via public GitHub REST API
+    stats: dict[str, int] | None = None
+    try:
+        rest_headers = {"Accept": "application/vnd.github.v3+json"}
+        user_body, _ = http_request(
+            f"https://api.github.com/users/{username}", headers=rest_headers, timeout=20, max_retries=3
+        )
+        user_json = json.loads(user_body)
+        followers = int(user_json.get("followers", 0))
+
+        repos_body, _ = http_request(
+            f"https://api.github.com/users/{username}/repos?per_page=100&type=owner",
+            headers=rest_headers,
+            timeout=20,
+            max_retries=3,
+        )
+        repos_json = json.loads(repos_body)
+        stars = sum(
+            int(r.get("stargazers_count", 0))
+            for r in repos_json
+            if isinstance(r, dict) and not r.get("fork")
+        )
+
+        prs_body, _ = http_request(
+            f"https://api.github.com/search/issues?q=author:{username}+type:pr",
+            headers=rest_headers,
+            timeout=20,
+            max_retries=3,
+        )
+        prs = int(json.loads(prs_body).get("total_count", 0))
+
+        issues_body, _ = http_request(
+            f"https://api.github.com/search/issues?q=author:{username}+type:issue",
+            headers=rest_headers,
+            timeout=20,
+            max_retries=3,
+        )
+        issues = int(json.loads(issues_body).get("total_count", 0))
+
+        total_commits = fetch_total_commits_search(username)
+        if total_commits is None:
+            total_commits = sum(d["count"] for d in all_days)
+
+        stats = {
+            "stars": stars,
+            "commits": total_commits,
+            "prs": prs,
+            "issues": issues,
+            "reviews": 0,
+            "contributed_to": 0,
+            "followers": followers,
+        }
+    except Exception as exc:
+        print(f"Warning: Public REST stats fetch encountered an error: {exc}")
+
+    return {
+        "rolling_days": rolling_days,
+        "all_days": all_days,
+        "stats": stats,
+    }
+
+
+def compute_streaks(days: list[dict[str, Any]]) -> dict[str, Any]:
+    """
+    Compute exact Longest Streak and Current Streak across a chronological list of days.
+    Current Streak remains active if either today (days[-1]) or yesterday (days[-2]) has count > 0,
+    preventing premature reset at 00:00 UTC before the user commits on the new day.
+    """
     best_streak = 0
+    best_start = ""
+    best_end = ""
     cur = 0
+    cur_start = ""
+
     for d in days:
         if d["count"] > 0:
+            if cur == 0:
+                cur_start = d["date"]
             cur += 1
             if cur > best_streak:
                 best_streak = cur
+                best_start = cur_start
+                best_end = d["date"]
         else:
             cur = 0
 
     current_streak = 0
-    for d in reversed(days):
-        if d["count"] > 0:
-            current_streak += 1
-        elif current_streak > 0:
-            break
+    curr_start = ""
+    curr_end = ""
+
+    if days:
+        # Determine starting index for active streak (today if > 0, else yesterday if > 0)
+        start_idx = -1
+        if days[-1]["count"] > 0:
+            start_idx = len(days) - 1
+        elif len(days) >= 2 and days[-2]["count"] > 0:
+            start_idx = len(days) - 2
+
+        if start_idx >= 0:
+            curr_end = days[start_idx]["date"]
+            for idx in range(start_idx, -1, -1):
+                if days[idx]["count"] > 0:
+                    curr_start = days[idx]["date"]
+                    current_streak += 1
+                else:
+                    break
+
+    return {
+        "best_streak": best_streak,
+        "best_start": best_start,
+        "best_end": best_end,
+        "current_streak": current_streak,
+        "curr_start": curr_start,
+        "curr_end": curr_end,
+    }
+
+
+def generate_isocalendar(rolling_days: list[dict[str, Any]]) -> None:
+    """Render and validate 3D isometric contribution calendar SVG."""
+    if not rolling_days:
+        print("Warning: No rolling contributions available. Keeping existing isocalendar.svg")
+        return
+
+    counts = [d["count"] for d in rolling_days]
+    reference = max(counts) if counts else 1
+    average = sum(counts) / len(counts) if counts else 0
+
+    streaks = compute_streaks(rolling_days)
+    best_streak = streaks["best_streak"]
+    current_streak = streaks["current_streak"]
 
     # Group into weeks (each starting Sunday)
-    weeks = []
-    cur_week = []
-    for d in days:
+    weeks: list[list[dict[str, Any]]] = []
+    cur_week: list[dict[str, Any]] = []
+    for d in rolling_days:
         dt = datetime.strptime(d["date"], "%Y-%m-%d")
         dow = (dt.weekday() + 1) % 7  # 0 = Sunday
         if dow == 0 and cur_week:
@@ -115,7 +510,6 @@ def generate_isocalendar() -> list[dict]:
     if cur_week:
         weeks.append(cur_week)
 
-    # Official lowlighter/metrics isometric cube renderer
     size = 6
     cubes_svg = []
     for i, week in enumerate(weeks):
@@ -128,7 +522,7 @@ def generate_isocalendar() -> list[dict]:
                 f'<path fill="{color}" d="M1.7,2 0,1 1.7,0 3.4,1 z" />'
                 f'<path fill="{color}" filter="url(#brightness1)" d="M0,1 1.7,2 1.7,{2 + ratio * size} 0,{1 + ratio * size} z" />'
                 f'<path fill="{color}" filter="url(#brightness2)" d="M1.7,2 3.4,1 3.4,{1 + ratio * size} 1.7,{2 + ratio * size} z" />'
-                f'</g>'
+                f"</g>"
             )
         week_svg.append("</g>")
         cubes_svg.append("".join(week_svg))
@@ -217,9 +611,269 @@ def generate_isocalendar() -> list[dict]:
     </foreignObject>
 </svg>'''
 
-    ISOCALENDAR_PATH.write_text(svg, encoding="utf-8")
-    print(f"Generated {ISOCALENDAR_PATH}")
-    return days
+    atomic_write_svg(ISOCALENDAR_PATH, svg)
+
+
+def calculate_rank(
+    *,
+    all_commits: bool,
+    commits: int,
+    prs: int,
+    issues: int,
+    reviews: int,
+    stars: int,
+    followers: int,
+) -> tuple[str, float]:
+    """
+    Official anuraghazra/github-readme-stats rank & circle stroke-dashoffset calculation.
+    """
+    commits_median = 1000 if all_commits else 250
+    commits_weight = 2
+    prs_median = 50
+    prs_weight = 3
+    issues_median = 25
+    issues_weight = 1
+    reviews_median = 2
+    reviews_weight = 1
+    stars_median = 50
+    stars_weight = 4
+    followers_median = 10
+    followers_weight = 1
+
+    total_weight = (
+        commits_weight
+        + prs_weight
+        + issues_weight
+        + reviews_weight
+        + stars_weight
+        + followers_weight
+    )
+
+    thresholds = [1, 12.5, 25, 37.5, 50, 62.5, 75, 87.5, 100]
+    levels = ["S", "A+", "A", "A-", "B+", "B", "B-", "C+", "C"]
+
+    exp_cdf = lambda x: 1.0 - (2.0 ** (-x))
+    log_norm_cdf = lambda x: x / (1.0 + x)
+
+    rank = (
+        1.0
+        - (
+            commits_weight * exp_cdf(commits / commits_median)
+            + prs_weight * exp_cdf(prs / prs_median)
+            + issues_weight * exp_cdf(issues / issues_median)
+            + reviews_weight * exp_cdf(reviews / reviews_median)
+            + stars_weight * log_norm_cdf(stars / stars_median)
+            + followers_weight * log_norm_cdf(followers / followers_median)
+        )
+        / total_weight
+    ) * 100.0
+
+    level = levels[next((i for i, t in enumerate(thresholds) if rank <= t), len(levels) - 1)]
+    circumference = 2.0 * math.pi * 40.0
+    progress = 100.0 - rank
+    dashoffset = ((100.0 - progress) / 100.0) * circumference
+    return level, dashoffset
+
+
+def k_formatter(num: int) -> str:
+    """Format large numbers matching github-readme-stats (e.g., 1065 -> '1.1k')."""
+    if abs(num) > 999:
+        val = round(num / 1000.0, 1)
+        return f"{int(val)}k" if val.is_integer() else f"{val:.1f}k"
+    return str(num)
+
+
+def generate_github_stats(stats: dict[str, int] | None) -> None:
+    """
+    Natively render icons/github-stats.svg without any 3rd-party Vercel dependency.
+    """
+    if not stats:
+        print(f"Warning: No stats data available. Keeping existing {STATS_PATH}")
+        return
+
+    stars = stats["stars"]
+    commits = stats["commits"]
+    prs = stats["prs"]
+    issues = stats["issues"]
+    reviews = stats.get("reviews", 0)
+    contributed_to = stats["contributed_to"]
+    followers = stats["followers"]
+
+    rank_level, dashoffset = calculate_rank(
+        all_commits=True,
+        commits=commits,
+        prs=prs,
+        issues=issues,
+        reviews=reviews,
+        stars=stars,
+        followers=followers,
+    )
+
+    stars_str = k_formatter(stars)
+    commits_str = k_formatter(commits)
+    prs_str = k_formatter(prs)
+    issues_str = k_formatter(issues)
+    contribs_str = k_formatter(contributed_to)
+
+    svg = f"""<svg
+        width="467"
+        height="195"
+        viewBox="0 0 467 195"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        role="img"
+        aria-labelledby="descId"
+      >
+        <title id="titleId">{DISPLAY_NAME}'s GitHub Stats, Rank: {rank_level}</title>
+        <desc id="descId">Total Stars Earned: {stars}, Total Commits  : {commits}, Total PRs: {prs}, Total Issues: {issues}, Contributed to (last year): {contributed_to}</desc>
+        <style>
+          .header {{
+            font: 600 19.5px 'Segoe UI', Ubuntu, Sans-Serif;
+            fill: #0969da;
+            animation: fadeInAnimation 0.8s ease-in-out forwards;
+          }}
+          .stat {{
+            font: 600 16px 'Segoe UI', Ubuntu, "Helvetica Neue", Sans-Serif; fill: #0f172a;
+          }}
+          .stagger {{
+            opacity: 0;
+            animation: fadeInAnimation 0.3s ease-in-out forwards;
+          }}
+          .rank-text {{
+            font: 800 25px 'Segoe UI', Ubuntu, Sans-Serif; fill: #0f172a;
+            animation: scaleInAnimation 0.3s ease-in-out forwards;
+          }}
+          .rank-percentile-header {{
+            font-size: 14px;
+          }}
+          .rank-percentile-text {{
+            font-size: 16px;
+          }}
+          .not_bold {{ font-weight: 400 }}
+          .bold {{ font-weight: 700 }}
+          .icon {{
+            fill: #0969da;
+            display: block;
+          }}
+          .rank-circle-rim {{
+            stroke: #0969da;
+            fill: none;
+            stroke-width: 6;
+            opacity: 0.2;
+          }}
+          .rank-circle {{
+            stroke: #0969da;
+            stroke-dasharray: 250;
+            fill: none;
+            stroke-width: 6;
+            stroke-linecap: round;
+            opacity: 0.8;
+            transform-origin: -10px 8px;
+            transform: rotate(-90deg);
+            animation: rankAnimation 1s forwards ease-in-out;
+          }}
+          @keyframes rankAnimation {{
+            from {{
+              stroke-dashoffset: 251.32741228718345;
+            }}
+            to {{
+              stroke-dashoffset: {dashoffset};
+            }}
+          }}
+          @keyframes scaleInAnimation {{
+            from {{
+              transform: translate(-5px, 5px) scale(0);
+            }}
+            to {{
+              transform: translate(-5px, 5px) scale(1);
+            }}
+          }}
+          @keyframes fadeInAnimation {{
+            from {{
+              opacity: 0;
+            }}
+            to {{
+              opacity: 1;
+            }}
+          }}
+        </style>
+        <rect
+          data-testid="card-bg"
+          x="0.5"
+          y="0.5"
+          rx="6"
+          height="99%"
+          stroke="#cbd5e1" stroke-width="1.2"
+          width="466"
+          fill="#f8fafc"
+          stroke-opacity="1"
+        />
+        <g data-testid="card-title" transform="translate(25, 35)">
+          <g transform="translate(0, 0)">
+            <text x="0" y="0" class="header" data-testid="header">{DISPLAY_NAME}'s GitHub Stats</text>
+          </g>
+        </g>
+        <g data-testid="main-card-body" transform="translate(0, 55)">
+          <g data-testid="rank-circle" transform="translate(396, 47.5)">
+            <circle class="rank-circle-rim" cx="-10" cy="8" r="40" />
+            <circle class="rank-circle" cx="-10" cy="8" r="40" />
+            <g class="rank-text">
+              <text x="-5" y="3" alignment-baseline="central" dominant-baseline="central" text-anchor="middle" data-testid="level-rank-icon">
+                {rank_level}
+              </text>
+            </g>
+          </g>
+          <svg x="0" y="0">
+            <g transform="translate(0, 0)">
+              <g class="stagger" style="animation-delay: 450ms" transform="translate(25, 0)">
+                <svg data-testid="icon" class="icon" viewBox="0 0 16 16" version="1.1" width="16" height="16">
+                  <path fill-rule="evenodd" d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25zm0 2.445L6.615 5.5a.75.75 0 01-.564.41l-3.097.45 2.24 2.184a.75.75 0 01.216.664l-.528 3.084 2.769-1.456a.75.75 0 01.698 0l2.77 1.456-.53-3.084a.75.75 0 01.216-.664l2.24-2.183-3.096-.45a.75.75 0 01-.564-.41L8 2.694v.001z"/>
+                </svg>
+                <text class="stat  bold" x="25" y="12.5">Total Stars Earned:</text>
+                <text class="stat  bold" x="248" y="12.5" data-testid="stars">{stars_str}</text>
+              </g>
+            </g>
+            <g transform="translate(0, 25)">
+              <g class="stagger" style="animation-delay: 600ms" transform="translate(25, 0)">
+                <svg data-testid="icon" class="icon" viewBox="0 0 16 16" version="1.1" width="16" height="16">
+                  <path fill-rule="evenodd" d="M1.643 3.143L.427 1.927A.25.25 0 000 2.104V5.75c0 .138.112.25.25.25h3.646a.25.25 0 00.177-.427L2.715 4.215a6.5 6.5 0 11-1.18 4.458.75.75 0 10-1.493.154 8.001 8.001 0 101.6-5.684zM7.75 4a.75.75 0 01.75.75v2.992l2.028.812a.75.75 0 01-.557 1.392l-2.5-1A.75.75 0 017 8.25v-3.5A.75.75 0 017.75 4z"/>
+                </svg>
+                <text class="stat  bold" x="25" y="12.5">Total Commits:</text>
+                <text class="stat  bold" x="248" y="12.5" data-testid="commits">{commits_str}</text>
+              </g>
+            </g>
+            <g transform="translate(0, 50)">
+              <g class="stagger" style="animation-delay: 750ms" transform="translate(25, 0)">
+                <svg data-testid="icon" class="icon" viewBox="0 0 16 16" version="1.1" width="16" height="16">
+                  <path fill-rule="evenodd" d="M7.177 3.073L9.573.677A.25.25 0 0110 .854v4.792a.25.25 0 01-.427.177L7.177 3.427a.25.25 0 010-.354zM3.75 2.5a.75.75 0 100 1.5.75.75 0 000-1.5zm-2.25.75a2.25 2.25 0 113 2.122v5.256a2.251 2.251 0 11-1.5 0V5.372A2.25 2.25 0 011.5 3.25zM11 2.5h-1V4h1a1 1 0 011 1v5.628a2.251 2.251 0 101.5 0V5A2.5 2.5 0 0011 2.5zm1 10.25a.75.75 0 111.5 0 .75.75 0 01-1.5 0zM3.75 12a.75.75 0 100 1.5.75.75 0 000-1.5z"/>
+                </svg>
+                <text class="stat  bold" x="25" y="12.5">Total PRs:</text>
+                <text class="stat  bold" x="248" y="12.5" data-testid="prs">{prs_str}</text>
+              </g>
+            </g>
+            <g transform="translate(0, 75)">
+              <g class="stagger" style="animation-delay: 900ms" transform="translate(25, 0)">
+                <svg data-testid="icon" class="icon" viewBox="0 0 16 16" version="1.1" width="16" height="16">
+                  <path fill-rule="evenodd" d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8zm9 3a1 1 0 11-2 0 1 1 0 012 0zm-.25-6.25a.75.75 0 00-1.5 0v3.5a.75.75 0 001.5 0v-3.5z"/>
+                </svg>
+                <text class="stat  bold" x="25" y="12.5">Total Issues:</text>
+                <text class="stat  bold" x="248" y="12.5" data-testid="issues">{issues_str}</text>
+              </g>
+            </g>
+            <g transform="translate(0, 100)">
+              <g class="stagger" style="animation-delay: 1050ms" transform="translate(25, 0)">
+                <svg data-testid="icon" class="icon" viewBox="0 0 16 16" version="1.1" width="16" height="16">
+                  <path fill-rule="evenodd" d="M2 2.5A2.5 2.5 0 014.5 0h8.75a.75.75 0 01.75.75v12.5a.75.75 0 01-.75.75h-2.5a.75.75 0 110-1.5h1.75v-2h-8a1 1 0 00-.714 1.7.75.75 0 01-1.072 1.05A2.495 2.495 0 012 11.5v-9zm10.5-1V9h-8c-.356 0-.694.074-1 .208V2.5a1 1 0 011-1h8zM5 12.25v3.25a.25.25 0 00.4.2l1.45-1.087a.25.25 0 01.3 0L8.6 15.7a.25.25 0 00.4-.2v-3.25a.25.25 0 00-.25-.25h-3.5a.25.25 0 00-.25.25z"/>
+                </svg>
+                <text class="stat  bold" x="25" y="12.5">Contributed to (last year):</text>
+                <text class="stat  bold" x="248" y="12.5" data-testid="contribs">{contribs_str}</text>
+              </g>
+            </g>
+          </svg>
+        </g>
+      </svg>"""
+
+    atomic_write_svg(STATS_PATH, svg)
 
 
 def render_streak_svg(
@@ -333,106 +987,75 @@ def render_streak_svg(
     </svg>"""
 
 
-def generate_github_stats(max_retries: int = 3) -> None:
-    url = (
-        f"https://github-readme-stats-fast.vercel.app/api?username={USERNAME}"
-        "&show_icons=true&include_all_commits=true&bg_color=f8fafc"
-        "&title_color=0969da&text_color=0f172a&icon_color=0969da"
-        "&border_color=cbd5e1&ring_color=0969da&hide_border=false"
-    )
-    for attempt in range(1, max_retries + 1):
-        try:
-            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-            with urllib.request.urlopen(req, timeout=25) as resp:
-                svg = resp.read().decode("utf-8")
-            # Remove Firefox font-size shrinking rules (@supports(-moz-appearance: auto))
-            svg = re.sub(r"@supports\(-moz-appearance:\s*auto\)\s*\{[^}]*\{[^}]*\}[^}]*\}", "", svg)
-            # Calibrate font sizes so at width="380" they match isocalendar (16px title, 14px body)
-            svg = svg.replace("font: 600 18px 'Segoe UI'", "font: 600 19.5px 'Segoe UI'")
-            svg = svg.replace("font: 600 14px 'Segoe UI'", "font: 600 16px 'Segoe UI'")
-            svg = svg.replace("font: 800 24px 'Segoe UI'", "font: 800 25px 'Segoe UI'")
-            svg = svg.replace('x="219.01"', 'x="248"')
-            svg = svg.replace('transform="translate(390.5, 47.5)"', 'transform="translate(396, 47.5)"')
-            svg = svg.replace('rx="4.5"', 'rx="6"')
-            svg = svg.replace('stroke="#cbd5e1"', 'stroke="#cbd5e1" stroke-width="1.2"')
-            STATS_PATH.write_text(svg, encoding="utf-8")
-            print(f"Generated {STATS_PATH}")
-            return
-        except Exception as exc:
-            print(f"[Attempt {attempt}/{max_retries}] Updating {STATS_PATH} failed: {exc}")
-            if attempt < max_retries:
-                time.sleep(attempt * 2)
-    print(f"Warning: could not update {STATS_PATH}. Keeping existing file.")
-
-
-def fmt_short_date(date_str: str) -> str:
+def fmt_short_date(date_str: str, ref_year: int | None = None) -> str:
     dt = datetime.strptime(date_str, "%Y-%m-%d")
+    if ref_year is not None and dt.year != ref_year:
+        return f"{dt.strftime('%b')} {dt.day}, {dt.year}"
     return f"{dt.strftime('%b')} {dt.day}"
 
 
-def generate_streak_stats(days: list[dict]) -> None:
-    if not days:
-        print("Warning: No contributions available. Keeping existing streak-stats.svg")
+def generate_streak_stats(all_days: list[dict[str, Any]]) -> None:
+    """
+    Generate icons/streak-stats.svg from exact all-time multi-year contribution history (zero hardcode).
+    """
+    if not all_days:
+        print("Warning: No all-time contributions available. Keeping existing streak-stats.svg")
         return
-    best_streak = 0
-    best_start = ""
-    best_end = ""
-    cur = 0
-    cur_start = ""
-    for d in days:
-        if d["count"] > 0:
-            if cur == 0:
-                cur_start = d["date"]
-            cur += 1
-            if cur > best_streak:
-                best_streak = cur
-                best_start = cur_start
-                best_end = d["date"]
-        else:
-            cur = 0
 
-    current_streak = 0
-    curr_end = ""
-    curr_start = ""
-    for d in reversed(days):
-        if d["count"] > 0:
-            if current_streak == 0:
-                curr_end = d["date"]
-            curr_start = d["date"]
-            current_streak += 1
-        elif current_streak > 0:
-            break
+    ref_year = int(all_days[-1]["date"][:4])
+    streaks = compute_streaks(all_days)
+    best_streak = streaks["best_streak"]
+    best_start = streaks["best_start"]
+    best_end = streaks["best_end"]
+    current_streak = streaks["current_streak"]
+    curr_start = streaks["curr_start"]
+    curr_end = streaks["curr_end"]
 
-    curr_range = (
-        fmt_short_date(curr_end)
-        if current_streak <= 1 and curr_end
-        else f"{fmt_short_date(curr_start)} - {fmt_short_date(curr_end)}"
-        if curr_start and curr_end
-        else "Present"
-    )
-    best_range = (
-        f"{fmt_short_date(best_start)} - {fmt_short_date(best_end)}"
-        if best_start and best_end
-        else "Present"
-    )
-    year_total = sum(d["count"] for d in days)
-    total_val = max(1208, year_total + 112)
+    if current_streak == 0:
+        curr_range = fmt_short_date(all_days[-1]["date"], ref_year)
+    elif current_streak == 1 and curr_end:
+        curr_range = fmt_short_date(curr_end, ref_year)
+    elif curr_start and curr_end:
+        curr_range = f"{fmt_short_date(curr_start, ref_year)} - {fmt_short_date(curr_end, ref_year)}"
+    else:
+        curr_range = "Present"
+
+    if best_start and best_end:
+        best_range = f"{fmt_short_date(best_start, ref_year)} - {fmt_short_date(best_end, ref_year)}"
+    else:
+        best_range = "Present"
+
+    total_val = sum(d["count"] for d in all_days)
     svg = render_streak_svg(
         total_str=f"{total_val:,}",
-        total_range="May 27, 2022 - Present",
+        total_range=f"{ACCOUNT_START_LABEL} - Present",
         curr_str=str(current_streak),
         curr_range=curr_range,
         best_str=str(best_streak),
         best_range=best_range,
     )
-    STREAK_PATH.write_text(svg, encoding="utf-8")
-    print(f"Generated {STREAK_PATH}")
+    atomic_write_svg(STREAK_PATH, svg)
 
 
 def main() -> None:
-    days = generate_isocalendar() or []
-    generate_github_stats()
-    generate_streak_stats(days)
+    token = get_github_token()
+    data: dict[str, Any] | None = None
+
+    if token:
+        print("GITHUB_TOKEN detected. Using primary GitHub GraphQL API engine...")
+        data = fetch_via_graphql(USERNAME, token)
+
+    if data is None:
+        print("Using multi-year public GitHub endpoints engine...")
+        data = fetch_via_public_endpoints(USERNAME)
+
+    if not data:
+        print("Warning: Could not fetch fresh data from GitHub. Existing SVGs preserved.")
+        return
+
+    generate_isocalendar(data["rolling_days"])
+    generate_github_stats(data["stats"])
+    generate_streak_stats(data["all_days"])
 
 
 if __name__ == "__main__":
