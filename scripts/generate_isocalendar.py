@@ -7,6 +7,8 @@ Generates and updates:
 """
 
 import re
+import time
+import urllib.error
 import urllib.request
 from datetime import datetime
 from pathlib import Path
@@ -27,11 +29,32 @@ PALETTE = {
 }
 
 
-def fetch_github_contributions(username: str) -> list[dict]:
+def fetch_github_contributions(username: str, max_retries: int = 4) -> list[dict]:
     url = f"https://github.com/users/{username}/contributions"
-    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-    with urllib.request.urlopen(req, timeout=15) as resp:
-        html = resp.read().decode("utf-8")
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    }
+    html = ""
+    for attempt in range(1, max_retries + 1):
+        try:
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                html = resp.read().decode("utf-8")
+                if html:
+                    break
+        except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, Exception) as exc:
+            print(f"[Attempt {attempt}/{max_retries}] Fetching contributions failed: {exc}")
+            if attempt < max_retries:
+                sleep_secs = attempt * 3
+                print(f"Waiting {sleep_secs}s before retry...")
+                time.sleep(sleep_secs)
+            else:
+                print(f"Error: All {max_retries} attempts failed to fetch contributions. Keeping existing SVGs.")
+                return []
+
+    if not html:
+        return []
 
     tds = re.findall(
         r'<td[^>]*data-date="([^"]+)"[^>]*id="([^"]+)"[^>]*data-level="(\d+)"[^>]*>',
@@ -55,7 +78,7 @@ def fetch_github_contributions(username: str) -> list[dict]:
 def generate_isocalendar() -> list[dict]:
     days = fetch_github_contributions(USERNAME)
     if not days:
-        print("No contributions found")
+        print("Warning: No contributions fetched. Keeping existing isocalendar.svg")
         return []
 
     counts = [d["count"] for d in days]
@@ -310,31 +333,36 @@ def render_streak_svg(
     </svg>"""
 
 
-def generate_github_stats() -> None:
+def generate_github_stats(max_retries: int = 3) -> None:
     url = (
         f"https://github-readme-stats-fast.vercel.app/api?username={USERNAME}"
         "&show_icons=true&include_all_commits=true&bg_color=f8fafc"
         "&title_color=0969da&text_color=0f172a&icon_color=0969da"
         "&border_color=cbd5e1&ring_color=0969da&hide_border=false"
     )
-    try:
-        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            svg = resp.read().decode("utf-8")
-        # Remove Firefox font-size shrinking rules (@supports(-moz-appearance: auto))
-        svg = re.sub(r"@supports\(-moz-appearance:\s*auto\)\s*\{[^}]*\{[^}]*\}[^}]*\}", "", svg)
-        # Calibrate font sizes so at width="380" they match isocalendar (16px title, 14px body)
-        svg = svg.replace("font: 600 18px 'Segoe UI'", "font: 600 19.5px 'Segoe UI'")
-        svg = svg.replace("font: 600 14px 'Segoe UI'", "font: 600 16px 'Segoe UI'")
-        svg = svg.replace("font: 800 24px 'Segoe UI'", "font: 800 25px 'Segoe UI'")
-        svg = svg.replace('x="219.01"', 'x="248"')
-        svg = svg.replace('transform="translate(390.5, 47.5)"', 'transform="translate(396, 47.5)"')
-        svg = svg.replace('rx="4.5"', 'rx="6"')
-        svg = svg.replace('stroke="#cbd5e1"', 'stroke="#cbd5e1" stroke-width="1.2"')
-        STATS_PATH.write_text(svg, encoding="utf-8")
-        print(f"Generated {STATS_PATH}")
-    except Exception as exc:
-        print(f"Warning: could not update {STATS_PATH}: {exc}")
+    for attempt in range(1, max_retries + 1):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+            with urllib.request.urlopen(req, timeout=25) as resp:
+                svg = resp.read().decode("utf-8")
+            # Remove Firefox font-size shrinking rules (@supports(-moz-appearance: auto))
+            svg = re.sub(r"@supports\(-moz-appearance:\s*auto\)\s*\{[^}]*\{[^}]*\}[^}]*\}", "", svg)
+            # Calibrate font sizes so at width="380" they match isocalendar (16px title, 14px body)
+            svg = svg.replace("font: 600 18px 'Segoe UI'", "font: 600 19.5px 'Segoe UI'")
+            svg = svg.replace("font: 600 14px 'Segoe UI'", "font: 600 16px 'Segoe UI'")
+            svg = svg.replace("font: 800 24px 'Segoe UI'", "font: 800 25px 'Segoe UI'")
+            svg = svg.replace('x="219.01"', 'x="248"')
+            svg = svg.replace('transform="translate(390.5, 47.5)"', 'transform="translate(396, 47.5)"')
+            svg = svg.replace('rx="4.5"', 'rx="6"')
+            svg = svg.replace('stroke="#cbd5e1"', 'stroke="#cbd5e1" stroke-width="1.2"')
+            STATS_PATH.write_text(svg, encoding="utf-8")
+            print(f"Generated {STATS_PATH}")
+            return
+        except Exception as exc:
+            print(f"[Attempt {attempt}/{max_retries}] Updating {STATS_PATH} failed: {exc}")
+            if attempt < max_retries:
+                time.sleep(attempt * 2)
+    print(f"Warning: could not update {STATS_PATH}. Keeping existing file.")
 
 
 def fmt_short_date(date_str: str) -> str:
@@ -343,6 +371,9 @@ def fmt_short_date(date_str: str) -> str:
 
 
 def generate_streak_stats(days: list[dict]) -> None:
+    if not days:
+        print("Warning: No contributions available. Keeping existing streak-stats.svg")
+        return
     best_streak = 0
     best_start = ""
     best_end = ""
