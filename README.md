@@ -108,6 +108,14 @@
     </td>
   </tr>
   <tr>
+    <td><b>🤖&nbsp;AI&#8209;Assisted&nbsp;Development</b></td>
+    <td>
+      <a href="https://docs.anthropic.com/en/docs/claude-code"><img src="./icons/claude-code.svg" height="34" alt="Claude Code" /></a>
+      <a href="https://antigravity.google"><img src="./icons/antigravity.svg" height="34" alt="Google Antigravity" /></a>
+      <a href="https://kiro.dev"><img src="./icons/kiro.svg" height="34" alt="Kiro" /></a>
+    </td>
+  </tr>
+  <tr>
     <td><b>🧰&nbsp;Tools&nbsp;&amp;&nbsp;Collaboration</b></td>
     <td>
       <a href="https://dbeaver.io"><img src="./icons/dbeaver.svg" height="34" alt="DBeaver" /></a>
