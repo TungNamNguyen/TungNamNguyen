@@ -60,7 +60,7 @@
               stroke-dashoffset: 251.32741228718345;
             }
             to {
-              stroke-dashoffset: 217.5525039279608;
+              stroke-dashoffset: 216.6798393019636;
             }
           }
           @keyframes scaleInAnimation {
